@@ -23,6 +23,11 @@ on:
         required: false
         type: boolean
         default: true
+      run_linux_arm64:
+        description: "运行 Linux ARM64"
+        required: false
+        type: boolean
+        default: false
 
 permissions: write-all
 env:
@@ -61,6 +66,11 @@ jobs:
             bundle: deb
             id: linux-amd64
             input: run_linux_amd64
+          - os: ubuntu-22.04
+            target: aarch64-unknown-linux-gnu
+            bundle: deb
+            id: linux-arm64
+            input: run_linux_arm64
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -133,8 +143,44 @@ jobs:
           rustup target list --installed
           echo "Rust target ${{ matrix.target }} installed."
 
+      - name: Setup for linux (arm64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu' && github.event.inputs[matrix.input] == 'true'
+        run: |
+          sudo ls -lR /etc/apt/ || true
+          cat > /tmp/sources.list << EOF
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-security main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-updates main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-backports main multiverse universe restricted
+
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-backports main multiverse universe restricted
+          EOF
+
+          sudo mv /etc/apt/sources.list /etc/apt/sources.list.default || true
+          sudo mv /tmp/sources.list /etc/apt/sources.list
+
+          sudo dpkg --add-architecture arm64
+          sudo apt-get update -y
+          sudo apt-get -f install -y
+          sudo apt-get install -y libxslt1.1 libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu pkg-config
+
+      - name: Tauri build (Linux arm64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu' && github.event.inputs[matrix.input] == 'true'
+        run: |
+          export PKG_CONFIG_ALLOW_CROSS=1
+          export PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/
+          pnpm build --target ${{ matrix.target }} -b ${{ matrix.bundle }}
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+
       - name: Tauri build
-        if: github.event.inputs[matrix.input] == 'true'
+        if: github.event.inputs[matrix.input] == 'true' && matrix.target != 'aarch64-unknown-linux-gnu'
         uses: tauri-apps/tauri-action@v0
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
