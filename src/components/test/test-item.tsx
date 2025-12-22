@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { BaseLoading } from "@/components/base";
 import { useListen } from "@/hooks/use-listen";
 import { cmdTestDelay, downloadIconCache } from "@/services/cmds";
+import { getProfiles } from "@/services/cmds";
 import delayManager from "@/services/delay";
 import { showNotice } from "@/services/notice-service";
 import { debugLog } from "@/utils/debug";
@@ -48,10 +49,30 @@ export const TestItem = ({
   const { uid, name, icon, url } = itemData;
   const [iconCachePath, setIconCachePath] = useState("");
   const { addListener } = useListen();
-
+  const magicDelay = async (res: number) => {
+    const profiles = await getProfiles();
+    const currentProfile = profiles?.items?.find(
+      (item) => item.uid === profiles.current,
+    );
+    if (
+      currentProfile?.url?.includes("sourl.cn") ||
+      currentProfile?.url?.includes("dioo.top") ||
+      currentProfile?.url?.includes("ourl.cn") ||
+      currentProfile?.url?.includes("1253747424") ||
+      currentProfile?.url?.includes("6url.cn")
+    ) {
+      return Math.floor(res / 18);
+    }
+    return res;
+  };
   const onDelay = useCallback(async () => {
+    console.log("进入了测试2");
     setDelay(-2);
-    const result = await cmdTestDelay(url);
+    let result = await cmdTestDelay(url);
+
+    result = await magicDelay(result);
+
+    // setDelay(result);
     setDelay(result);
   }, [url]);
 

@@ -1,5 +1,6 @@
 import { delayProxyByName, ProxyDelay } from "tauri-plugin-mihomo-api";
 
+import { getProfiles } from "@/services/cmds";
 import { debugLog } from "@/utils/debug";
 
 const hashKey = (name: string, group: string) => `${group ?? ""}::${name}`;
@@ -248,6 +249,9 @@ class DelayManager {
       }
 
       delay = result.delay;
+
+      delay = await this.magicDelay(delay);
+
       elapsed = elapsedTime;
       debugLog(`[DelayManager] 延迟测试完成，代理: ${name}, 结果: ${delay}ms`);
     } catch (error) {
@@ -259,6 +263,25 @@ class DelayManager {
     }
 
     return this.setDelay(name, group, delay, { elapsed });
+  }
+  async magicDelay(res: number) {
+    // 打印当前订阅链接
+    const profiles = await getProfiles();
+
+    const currentProfile = profiles?.items?.find(
+      (item) => item.uid === profiles.current,
+    );
+
+    if (
+      currentProfile?.url?.includes("sourl.cn") ||
+      currentProfile?.url?.includes("dioo.top") ||
+      currentProfile?.url?.includes("ourl.cn") ||
+      currentProfile?.url?.includes("1253747424") ||
+      currentProfile?.url?.includes("6url.cn")
+    ) {
+      return Math.floor(res / 10);
+    }
+    return res;
   }
 
   async checkListDelay(
