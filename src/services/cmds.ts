@@ -455,6 +455,10 @@ export async function restoreLocalBackup(filename: string) {
   return invoke<void>("restore_local_backup", { filename });
 }
 
+export async function importLocalBackup(source: string) {
+  return invoke<string>("import_local_backup", { source });
+}
+
 export async function exportLocalBackup(filename: string, destination: string) {
   return invoke<void>("export_local_backup", { filename, destination });
 }
@@ -550,3 +554,12 @@ export const isAdmin = async () => {
 export async function getNextUpdateTime(uid: string) {
   return invoke<number | null>("get_next_update_time", { uid });
 }
+
+export const isPortInUse = async (port: number) => {
+  try {
+    return await invoke<boolean>("is_port_in_use", { port });
+  } catch (error) {
+    console.error("检查端口使用状态失败:", error);
+    return false;
+  }
+};

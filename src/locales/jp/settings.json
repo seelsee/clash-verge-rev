@@ -15,7 +15,6 @@
         "systemProxy": "システムプロキシ"
       },
       "tooltips": {
-        "autoLaunchAdmin": "管理者モードでは起動時の自動起動がサポートされない場合があります。",
         "silentStart": "アプリケーションを起動すると、バックグラウンドモードで実行され、アプリケーションパネルは表示されません。"
       },
       "fields": {
@@ -205,11 +204,14 @@
           "trafficGraph": "トラフィックグラフ",
           "memoryUsage": "コアメモリ使用量",
           "proxyGroupIcon": "プロキシグループアイコン",
+          "toastPosition": "トーストの表示位置",
           "hoverNavigator": "Hover Jump Navigator",
           "hoverNavigatorDelay": "Hover Jump Navigator Delay",
           "navIcon": "ナビゲーションバーアイコン",
+          "collapseNavBar": "ナビゲーションバーを折りたたむ",
           "trayIcon": "トレイアイコン",
-          "showProxyGroupsInline": "Show Proxy Groups Inline",
+          "proxyGroupsDisplayMode": "Proxy Groups Display Mode",
+          "showOutboundModesInline": "Show Outbound Modes Inline",
           "commonTrayIcon": "通常のトレイアイコン",
           "systemProxyTrayIcon": "システムプロキシトレイアイコン",
           "tunTrayIcon": "TUNモードトレイアイコン",
@@ -225,6 +227,17 @@
             "monochrome": "モノクロアイコン",
             "colorful": "カラーアイコン",
             "disable": "無効にする"
+          },
+          "toastPosition": {
+            "topLeft": "左上",
+            "topRight": "右上",
+            "bottomLeft": "左下",
+            "bottomRight": "右下"
+          },
+          "proxyGroupsDisplayMode": {
+            "default": "Default",
+            "inline": "Inline",
+            "disable": "Disable"
           }
         }
       }
@@ -244,6 +257,7 @@
         "random": "ランダムポート"
       },
       "messages": {
+        "portInUse": "Port {{port}} is already in use",
         "saved": "Port settings saved",
         "saveFailed": "Failed to save port settings"
       }
@@ -283,6 +297,7 @@
         "backup": "バックアップ",
         "export": "Export",
         "exportBackup": "Export Backup",
+        "importBackup": "バックアップをインポート",
         "deleteBackup": "バックアップを削除",
         "restore": "復元",
         "restoreBackup": "バックアップを復元",
@@ -307,6 +322,8 @@
         "restoreSuccess": "復元に成功しました。アプリケーションは1秒後に再起動します。",
         "localBackupExported": "Local backup exported successfully",
         "localBackupExportFailed": "Failed to export local backup",
+        "localBackupImported": "ローカルバックアップのインポートに成功しました",
+        "localBackupImportFailed": "ローカルバックアップのインポートに失敗しました: {{error}}",
         "webdavRefreshSuccess": "WebDAV refresh succeeded",
         "webdavRefreshFailed": "WebDAV refresh failed: {{error}}",
         "confirmDelete": "Confirm to delete this backup file?",
@@ -333,7 +350,9 @@
       "history": {
         "title": "Backup history",
         "summary": "{{count}} backups • latest {{recent}}",
-        "empty": "No backups available"
+        "empty": "No backups available",
+        "unknownPlatform": "unknown",
+        "unknownTime": "Unknown time"
       },
       "webdav": {
         "title": "WebDAV settings"
@@ -402,6 +421,7 @@
         "proxyGuard": "システムプロキシガード",
         "guardDuration": "プロキシガード間隔",
         "alwaysUseDefaultBypass": "常にデフォルトのバイパスを使用",
+        "enableBypassCheck": "プロキシバイパス形式を検証",
         "proxyBypass": "プロキシバイパス設定：",
         "bypass": "現在のバイパス：",
         "pacScriptContent": "PACスクリプト内容"
@@ -424,6 +444,7 @@
         "stack": "TUNモードスタック",
         "device": "Device Name",
         "autoRoute": "グローバルルートを自動設定",
+        "routeExcludeAddress": "ルート除外アドレス",
         "strictRoute": "厳格なルート",
         "autoDetectInterface": "トラフィックの出口インターフェースを自動選択",
         "dnsHijack": "DNSハイジャック",

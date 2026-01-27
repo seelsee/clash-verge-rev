@@ -15,7 +15,6 @@
         "systemProxy": "Proksi Sistem"
       },
       "tooltips": {
-        "autoLaunchAdmin": "Administrator mode may not support auto launch",
         "silentStart": "Mulai program dalam mode latar belakang tanpa menampilkan panel"
       },
       "fields": {
@@ -205,11 +204,14 @@
           "trafficGraph": "Grafik Lalu Lintas",
           "memoryUsage": "Penggunaan Memori",
           "proxyGroupIcon": "Ikon Grup Proksi",
+          "toastPosition": "Posisi toast",
           "hoverNavigator": "Hover Jump Navigator",
           "hoverNavigatorDelay": "Hover Jump Navigator Delay",
           "navIcon": "Ikon Navigasi",
+          "collapseNavBar": "Ciutkan bilah navigasi",
           "trayIcon": "Ikon Tray",
-          "showProxyGroupsInline": "Show Proxy Groups Inline",
+          "proxyGroupsDisplayMode": "Proxy Groups Display Mode",
+          "showOutboundModesInline": "Show Outbound Modes Inline",
           "commonTrayIcon": "Ikon Tray Umum",
           "systemProxyTrayIcon": "Ikon Tray Proksi Sistem",
           "tunTrayIcon": "Ikon Tray Tun",
@@ -225,6 +227,17 @@
             "monochrome": "Monokrom",
             "colorful": "Berwarna",
             "disable": "Nonaktifkan"
+          },
+          "toastPosition": {
+            "topLeft": "Kiri atas",
+            "topRight": "Kanan atas",
+            "bottomLeft": "Kiri bawah",
+            "bottomRight": "Kanan bawah"
+          },
+          "proxyGroupsDisplayMode": {
+            "default": "Default",
+            "inline": "Inline",
+            "disable": "Disable"
           }
         }
       }
@@ -244,6 +257,7 @@
         "random": "Port Acak"
       },
       "messages": {
+        "portInUse": "Port {{port}} is already in use",
         "saved": "Port settings saved",
         "saveFailed": "Failed to save port settings"
       }
@@ -283,6 +297,7 @@
         "backup": "Cadangan",
         "export": "Export",
         "exportBackup": "Export Backup",
+        "importBackup": "Import Backup",
         "deleteBackup": "Hapus Cadangan",
         "restore": "Pulihkan",
         "restoreBackup": "Pulihkan Cadangan",
@@ -307,6 +322,8 @@
         "restoreSuccess": "Pemulihan Berhasil, Aplikasi akan dimulai ulang dalam 1 detik",
         "localBackupExported": "Local backup exported successfully",
         "localBackupExportFailed": "Failed to export local backup",
+        "localBackupImported": "Local backup imported successfully",
+        "localBackupImportFailed": "Failed to import local backup: {{error}}",
         "webdavRefreshSuccess": "WebDAV refresh succeeded",
         "webdavRefreshFailed": "WebDAV refresh failed: {{error}}",
         "confirmDelete": "Konfirmasi untuk menghapus file cadangan ini?",
@@ -333,7 +350,9 @@
       "history": {
         "title": "Backup history",
         "summary": "{{count}} backups • latest {{recent}}",
-        "empty": "No backups available"
+        "empty": "No backups available",
+        "unknownPlatform": "unknown",
+        "unknownTime": "Unknown time"
       },
       "webdav": {
         "title": "WebDAV settings"
@@ -402,6 +421,7 @@
         "proxyGuard": "Penjaga Proksi",
         "guardDuration": "Durasi Penjagaan",
         "alwaysUseDefaultBypass": "Selalu gunakan Bypass Default",
+        "enableBypassCheck": "Validasi format bypass proksi",
         "proxyBypass": "Pengaturan Bypass Proksi: ",
         "bypass": "Bypass: ",
         "pacScriptContent": "Konten Skrip PAC"
@@ -424,6 +444,7 @@
         "stack": "Tumpukan Tun",
         "device": "Device Name",
         "autoRoute": "Rute Otomatis",
+        "routeExcludeAddress": "Alamat Pengecualian Rute",
         "strictRoute": "Rute Ketat",
         "autoDetectInterface": "Deteksi Antarmuka Otomatis",
         "dnsHijack": "Pembajakan DNS",

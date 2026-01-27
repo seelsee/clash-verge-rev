@@ -44,6 +44,7 @@ interface IConfigData {
     "auto-redirect"?: boolean;
     "auto-detect-interface": boolean;
     "dns-hijack": string[];
+    "route-exclude-address"?: string[];
     "strict-route": boolean;
     mtu: number;
   };
@@ -429,6 +430,16 @@ type CipherType =
   | "aez-384"
   | "deoxys-ii-256-128"
   | "rc4-md5";
+type MieruTransport = "TCP" | "UDP";
+type MieruMultiplexing =
+  | "MULTIPLEXING_OFF"
+  | "MULTIPLEXING_LOW"
+  | "MULTIPLEXING_MIDDLE"
+  | "MULTIPLEXING_HIGH";
+type SudokuAeadMethod = "chacha20-poly1305" | "aes-128-gcm" | "none";
+type SudokuTableType = "prefer_ascii" | "prefer_entropy";
+type SudokuHttpMaskMode = "legacy" | "stream" | "poll" | "auto";
+type SudokuHttpMaskStrategy = "random" | "post" | "websocket";
 // base
 interface IProxyBaseConfig {
   tfo?: boolean;
@@ -513,6 +524,29 @@ interface IProxyTrojanConfig extends IProxyBaseConfig {
   };
   "client-fingerprint"?: ClientFingerprint;
 }
+// anytls
+interface IProxyAnyTLSConfig extends IProxyBaseConfig {
+  name: string;
+  type: "anytls";
+  server?: string;
+  port?: number;
+  password?: string;
+  alpn?: string[];
+  sni?: string;
+  "client-fingerprint"?: ClientFingerprint;
+  "skip-cert-verify"?: boolean;
+  fingerprint?: string;
+  certificate?: string;
+  "private-key"?: string;
+  "ech-opts"?: {
+    enable?: boolean;
+    config?: string;
+  };
+  udp?: boolean;
+  "idle-session-check-interval"?: number;
+  "idle-session-timeout"?: number;
+  "min-idle-session"?: number;
+}
 // tuic
 interface IProxyTuicConfig extends IProxyBaseConfig {
   name: string;
@@ -545,6 +579,20 @@ interface IProxyTuicConfig extends IProxyBaseConfig {
   sni?: string;
   "udp-over-stream"?: boolean;
   "udp-over-stream-version"?: number;
+}
+// mieru
+interface IProxyMieruConfig extends IProxyBaseConfig {
+  name: string;
+  type: "mieru";
+  server?: string;
+  port?: number;
+  "port-range"?: string;
+  transport?: MieruTransport;
+  udp?: boolean;
+  username?: string;
+  password?: string;
+  multiplexing?: MieruMultiplexing;
+  "handshake-mode"?: string;
 }
 // vless
 interface IProxyVlessConfig extends IProxyBaseConfig {
@@ -714,6 +762,26 @@ interface IProxyShadowsocksConfig extends IProxyBaseConfig {
   "client-fingerprint"?: ClientFingerprint;
   smux?: boolean;
 }
+// sudoku
+interface IProxySudokuConfig extends IProxyBaseConfig {
+  name: string;
+  type: "sudoku";
+  server?: string;
+  port?: number;
+  key?: string;
+  "aead-method"?: SudokuAeadMethod;
+  "padding-min"?: number;
+  "padding-max"?: number;
+  "table-type"?: SudokuTableType;
+  "enable-pure-downlink"?: boolean;
+  "http-mask"?: boolean;
+  "http-mask-mode"?: SudokuHttpMaskMode;
+  "http-mask-tls"?: boolean;
+  "http-mask-host"?: string;
+  "http-mask-strategy"?: SudokuHttpMaskStrategy;
+  "custom-table"?: string;
+  "custom-tables"?: string[];
+}
 // shadowsocksR
 interface IProxyshadowsocksRConfig extends IProxyBaseConfig {
   name: string;
@@ -765,13 +833,16 @@ interface IProxyConfig
     IProxySocks5Config,
     IProxySshConfig,
     IProxyTrojanConfig,
+    IProxyAnyTLSConfig,
     IProxyTuicConfig,
+    IProxyMieruConfig,
     IProxyVlessConfig,
     IProxyVmessConfig,
     IProxyWireguardConfig,
     IProxyHysteriaConfig,
     IProxyHysteria2Config,
     IProxyShadowsocksConfig,
+    IProxySudokuConfig,
     IProxyshadowsocksRConfig,
     IProxySmuxConfig,
     IProxySnellConfig {
@@ -783,6 +854,7 @@ interface IProxyConfig
     | "snell"
     | "http"
     | "trojan"
+    | "anytls"
     | "hysteria"
     | "hysteria2"
     | "tuic"
@@ -790,7 +862,9 @@ interface IProxyConfig
     | "ssh"
     | "socks5"
     | "vmess"
-    | "vless";
+    | "vless"
+    | "mieru"
+    | "sudoku";
 }
 
 interface IVergeConfig {
@@ -814,13 +888,16 @@ interface IVergeConfig {
   enable_group_icon?: boolean;
   menu_icon?: "monochrome" | "colorful" | "disable";
   menu_order?: string[];
+  notice_position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  collapse_navbar?: boolean;
   tray_icon?: "monochrome" | "colorful";
   common_tray_icon?: boolean;
   sysproxy_tray_icon?: boolean;
   tun_tray_icon?: boolean;
   // enable_tray_speed?: boolean;
   // enable_tray_icon?: boolean;
-  tray_inline_proxy_groups?: boolean;
+  tray_proxy_groups_display_mode?: "default" | "inline" | "disable";
+  tray_inline_outbound_modes?: boolean;
   enable_tun_mode?: boolean;
   enable_auto_light_weight_mode?: boolean;
   auto_light_weight_minutes?: number;

@@ -15,7 +15,6 @@
         "systemProxy": "System Proxy"
       },
       "tooltips": {
-        "autoLaunchAdmin": "Administrator mode may not support auto launch",
         "silentStart": "Start the program in background mode without displaying the panel"
       },
       "fields": {
@@ -205,11 +204,14 @@
           "trafficGraph": "Traffic Graph",
           "memoryUsage": "Core Usage",
           "proxyGroupIcon": "Proxy Group Icon",
+          "toastPosition": "Toast Position",
           "hoverNavigator": "Hover Jump Navigator",
           "hoverNavigatorDelay": "Hover Jump Navigator Delay",
           "navIcon": "Nav Icon",
+          "collapseNavBar": "Collapse Navigation Bar",
           "trayIcon": "Tray Icon",
-          "showProxyGroupsInline": "Show Proxy Groups Inline",
+          "proxyGroupsDisplayMode": "Proxy Groups Display Mode",
+          "showOutboundModesInline": "Show Outbound Modes Inline",
           "commonTrayIcon": "Common Tray Icon",
           "systemProxyTrayIcon": "System Proxy Tray Icon",
           "tunTrayIcon": "Tun Tray Icon",
@@ -224,6 +226,17 @@
           "icon": {
             "monochrome": "Monochrome",
             "colorful": "Colorful",
+            "disable": "Disable"
+          },
+          "toastPosition": {
+            "topLeft": "Top Left",
+            "topRight": "Top Right",
+            "bottomLeft": "Bottom Left",
+            "bottomRight": "Bottom Right"
+          },
+          "proxyGroupsDisplayMode": {
+            "default": "Default",
+            "inline": "Inline",
             "disable": "Disable"
           }
         }
@@ -244,6 +257,7 @@
         "random": "Random Port"
       },
       "messages": {
+        "portInUse": "Port {{port}} is already in use",
         "saved": "Port settings saved",
         "saveFailed": "Failed to save port settings"
       }
@@ -283,6 +297,7 @@
         "backup": "Backup",
         "export": "Export",
         "exportBackup": "Export Backup",
+        "importBackup": "Import Backup",
         "deleteBackup": "Delete Backup",
         "restore": "Restore",
         "restoreBackup": "Restore Backup",
@@ -307,6 +322,8 @@
         "restoreSuccess": "Restore Success, App will restart in 1s",
         "localBackupExported": "Local backup exported successfully",
         "localBackupExportFailed": "Failed to export local backup",
+        "localBackupImported": "Local backup imported successfully",
+        "localBackupImportFailed": "Failed to import local backup: {{error}}",
         "webdavRefreshSuccess": "WebDAV refresh succeeded",
         "webdavRefreshFailed": "WebDAV refresh failed: {{error}}",
         "confirmDelete": "Confirm to delete this backup file?",
@@ -333,7 +350,9 @@
       "history": {
         "title": "Backup history",
         "summary": "{{count}} backups • latest {{recent}}",
-        "empty": "No backups available"
+        "empty": "No backups available",
+        "unknownPlatform": "unknown",
+        "unknownTime": "Unknown time"
       },
       "webdav": {
         "title": "WebDAV settings"
@@ -402,6 +421,7 @@
         "proxyGuard": "Proxy Guard",
         "guardDuration": "Guard Duration",
         "alwaysUseDefaultBypass": "Always use Default Bypass",
+        "enableBypassCheck": "Validate Proxy Bypass Format",
         "proxyBypass": "Proxy Bypass Settings: ",
         "bypass": "Bypass: ",
         "pacScriptContent": "PAC Script Content"
@@ -424,6 +444,7 @@
         "stack": "Tun Stack",
         "device": "Device Name",
         "autoRoute": "Auto Route",
+        "routeExcludeAddress": "Route Exclude Address",
         "strictRoute": "Strict Route",
         "autoDetectInterface": "Auto Detect Interface",
         "dnsHijack": "DNS Hijack",

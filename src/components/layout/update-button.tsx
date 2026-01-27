@@ -2,10 +2,10 @@ import { Button } from "@mui/material";
 import { useRef } from "react";
 import useSWR from "swr";
 
+import { DialogRef } from "@/components/base";
 import { useVerge } from "@/hooks/use-verge";
 import { checkUpdateSafe } from "@/services/update";
 
-import { DialogRef } from "../base";
 import { UpdateViewer } from "../setting/mods/update-viewer";
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
 }
 
 export const UpdateButton = (props: Props) => {
+  return null;
   const { className } = props;
   const { verge } = useVerge();
   const { auto_check_update } = verge || {};

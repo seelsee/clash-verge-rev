@@ -48,7 +48,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Virtuoso } from "react-virtuoso";
 
-import { Switch } from "@/components/base";
+import { BaseSearchBox, Switch } from "@/components/base";
 import { GroupItem } from "@/components/profile/group-item";
 import {
   getNetworkInterfaces,
@@ -59,8 +59,6 @@ import { showNotice } from "@/services/notice-service";
 import { useThemeMode } from "@/services/states";
 import type { TranslationKey } from "@/types/generated/i18n-keys";
 import getSystem from "@/utils/get-system";
-
-import { BaseSearchBox } from "../base/base-search-box";
 
 interface Props {
   proxiesUid: string;
@@ -427,7 +425,13 @@ export const GroupsEditorViewer = (props: Props) => {
   });
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xl" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xl"
+      fullWidth
+      disableEnforceFocus={!visualization}
+    >
       <DialogTitle>
         {
           <Box display="flex" justifyContent="space-between">
@@ -822,6 +826,9 @@ export const GroupsEditorViewer = (props: Props) => {
                           "Hysteria2",
                           "WireGuard",
                           "Tuic",
+                          "Mieru",
+                          "AnyTLS",
+                          "Sudoku",
                           "Relay",
                           "Selector",
                           "Fallback",

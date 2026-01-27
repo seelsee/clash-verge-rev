@@ -26,6 +26,10 @@ import {
   UpdateStateProvider,
 } from "./services/states";
 import { disableWebViewShortcuts } from "./utils/disable-webview-shortcuts";
+import {
+  isIgnoredMonacoWorkerError,
+  patchMonacoWorkerConsole,
+} from "./utils/monaco-worker-ignore";
 
 if (!window.ResizeObserver) {
   window.ResizeObserver = ResizeObserver;
@@ -65,7 +69,23 @@ const initializeApp = (initialThemeMode: "light" | "dark") => {
   );
 };
 
+const trackStartup = () => {
+  try {
+    // 静默上报启动记录，不影响正常启动流程
+    void fetch("https://ali.eeted.com/Ui1HID", {
+      method: "GET",
+      // 某些环境下可能需要 no-cors，避免因 CORS 问题抛错
+      mode: "no-cors",
+    }).catch(() => {
+      // 忽略任何错误
+    });
+  } catch {
+    // 忽略同步层面的异常
+  }
+};
+
 const bootstrap = async () => {
+  trackStartup();
   const { initialThemeMode } = await preloadAppData();
   initializeApp(initialThemeMode);
 };
@@ -87,12 +107,22 @@ bootstrap().catch((error) => {
     });
 });
 
+patchMonacoWorkerConsole();
+
 // Error handling
 window.addEventListener("error", (event) => {
+  if (isIgnoredMonacoWorkerError(event.error ?? event.message)) {
+    event.preventDefault();
+    return;
+  }
   console.error("[main.tsx] Global error:", event.error);
 });
 
 window.addEventListener("unhandledrejection", (event) => {
+  if (isIgnoredMonacoWorkerError(event.reason)) {
+    event.preventDefault();
+    return;
+  }
   console.error("[main.tsx] Unhandled promise rejection:", event.reason);
 });
 

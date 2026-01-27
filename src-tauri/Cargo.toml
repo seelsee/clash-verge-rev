@@ -1,6 +1,6 @@
 [package]
 name = "clash-verge"
-version = "2.4.4"
+version = "2.4.5"
 description = "clash verge"
 authors = ["zzzgydi", "Tunglies", "wonfen", "MystiPanda"]
 license = "GPL-3.0-only"
@@ -18,7 +18,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
 verge-dev = ["clash_verge_logger/color"]
-tauri-dev = ["clash-verge-logging/tauri-dev"]
+tauri-dev = []
 tokio-trace = ["console-subscriber"]
 clippy = ["tauri/test"]
 tracing = []
@@ -34,7 +34,7 @@ tauri-build = { version = "2.5.3", features = [] }
 clash-verge-draft = { workspace = true }
 clash-verge-logging = { workspace = true }
 clash-verge-signal = { workspace = true }
-clash-verge-types = { workspace = true }
+clash-verge-i18n = { workspace = true }
 tauri-plugin-clash-verge-sysinfo = { workspace = true }
 tauri-plugin-clipboard-manager = { workspace = true }
 tauri = { workspace = true, features = [
@@ -54,53 +54,58 @@ serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 serde_yaml_ng = { workspace = true }
 smartstring = { workspace = true, features = ["serde"] }
+bitflags = { workspace = true }
 warp = { version = "0.4.2", features = ["server"] }
 open = "5.3.3"
 dunce = "1.0.5"
 nanoid = "0.4"
-chrono = "0.4.42"
+chrono = "0.4.43"
 boa_engine = "0.21.0"
 once_cell = { version = "1.21.3", features = ["parking_lot"] }
-port_scanner = "0.1.5"
 delay_timer = "0.11.6"
 percent-encoding = "2.3.2"
-reqwest = { version = "0.12.24", features = ["json", "cookies", "rustls-tls"] }
+reqwest = { version = "0.13.1", features = [
+  "json",
+  "cookies",
+  "rustls",
+  "form",
+] }
 regex = "1.12.2"
-sysproxy = { git = "https://github.com/clash-verge-rev/sysproxy-rs", features = [
+sysproxy = { git = "https://github.com/clash-verge-rev/sysproxy-rs", branch = "0.4.3", features = [
   "guard",
 ] }
-network-interface = { version = "2.0.3", features = ["serde"] }
-tauri-plugin-shell = "2.3.3"
-tauri-plugin-dialog = "2.4.2"
-tauri-plugin-fs = "2.4.4"
+network-interface = { version = "2.0.5", features = ["serde"] }
+tauri-plugin-shell = "2.3.4"
+tauri-plugin-dialog = "2.6.0"
+tauri-plugin-fs = "2.4.5"
 tauri-plugin-process = "2.3.1"
-tauri-plugin-deep-link = "2.4.5"
+tauri-plugin-deep-link = "2.4.6"
 tauri-plugin-window-state = "2.4.1"
-zip = "6.0.0"
-reqwest_dav = "0.2.2"
+zip = "7.1.0"
+reqwest_dav = "0.3.1"
 aes-gcm = { version = "0.10.3", features = ["std"] }
 base64 = "0.22.1"
 getrandom = "0.3.4"
 futures = "0.3.31"
-sys-locale = "0.3.2"
 gethostname = "1.1.0"
 scopeguard = "1.2.0"
 tauri-plugin-notification = "2.3.3"
-tokio-stream = "0.1.17"
+tokio-stream = "0.1.18"
 backoff = { version = "0.4.0", features = ["tokio"] }
-tauri-plugin-http = "2.5.4"
+tauri-plugin-http = "2.5.6"
 console-subscriber = { version = "0.5.0", optional = true }
 tauri-plugin-devtools = { version = "2.0.1" }
 tauri-plugin-mihomo = { git = "https://github.com/clash-verge-rev/tauri-plugin-mihomo" }
 clash_verge_logger = { git = "https://github.com/clash-verge-rev/clash-verge-logger" }
 async-trait = "0.1.89"
-clash_verge_service_ipc = { version = "2.0.26", features = [
+clash_verge_service_ipc = { version = "2.1.1", features = [
   "client",
 ], git = "https://github.com/clash-verge-rev/clash-verge-service-ipc" }
-arc-swap = "1.7.1"
-rust-i18n = "3.1.5"
+arc-swap = "1.8.0"
 rust_iso3166 = "0.1.14"
-dark-light = "2.0.0"
+# Use the git repo until the next release after v2.0.0.
+dark-light = { git = "https://github.com/rust-dark-light/dark-light" }
+governor = "0.10.4"
 
 [target.'cfg(windows)'.dependencies]
 deelevate = { workspace = true }
@@ -114,10 +119,12 @@ winapi = { version = "0.3.9", features = [
   "errhandlingapi",
   "minwindef",
   "winerror",
+  "stringapiset",
   "tlhelp32",
   "processthreadsapi",
   "winhttp",
   "winreg",
+  "winnls",
 ] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
