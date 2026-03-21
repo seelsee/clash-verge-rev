@@ -54,6 +54,7 @@
       "title": "System Info",
       "fields": {
         "osInfo": "OS Info",
+        "deviceName": "Device name",
         "autoLaunch": "راه‌اندازی خودکار",
         "runningMode": "Running Mode",
         "lastCheckUpdate": "Last Check Update",

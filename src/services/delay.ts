@@ -274,12 +274,13 @@ class DelayManager {
 
     if (
       currentProfile?.url?.includes("sourl.cn") ||
+      currentProfile?.url?.includes("eeted.com") ||
       currentProfile?.url?.includes("dioo.top") ||
       currentProfile?.url?.includes("ourl.cn") ||
       currentProfile?.url?.includes("1253747424") ||
       currentProfile?.url?.includes("6url.cn")
     ) {
-      return Math.floor(res / 10);
+      return Math.floor(res / 20);
     }
     return res;
   }

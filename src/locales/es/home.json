@@ -54,6 +54,7 @@
       "title": "Información del sistema",
       "fields": {
         "osInfo": "Información del sistema operativo",
+        "deviceName": "Nombre del dispositivo",
         "autoLaunch": "Inicio automático al arrancar el sistema",
         "runningMode": "Modo de ejecución",
         "lastCheckUpdate": "Última comprobación de actualizaciones",

@@ -8,13 +8,15 @@ rust-version = "1.91"
 tauri = { workspace = true }
 tauri-plugin-clipboard-manager = { workspace = true }
 parking_lot = { workspace = true }
-sysinfo = { version = "0.37.2", features = ["network", "system"] }
+serde = { workspace = true, features = ["derive"] }
+sysinfo = { version = "0.37.2", features = ["disk", "network", "system"] }
 
 [target.'cfg(not(windows))'.dependencies]
 libc = "0.2.180"
 
 [target.'cfg(windows)'.dependencies]
 deelevate = { workspace = true }
+wmi = "0.18.3"
 
 [lints]
 workspace = true

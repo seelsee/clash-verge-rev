@@ -160,7 +160,7 @@
         },
         "notifications": {
           "latestVersion": "当前已是最新版本",
-          "versionCopied": "Verge 版本已复制到剪贴板"
+          "versionCopied": "Verge 版本已成功复制到剪贴板"
         },
         "fields": {
           "backupSetting": "备份设置",

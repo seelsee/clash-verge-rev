@@ -54,6 +54,7 @@
       "title": "시스템 정보",
       "fields": {
         "osInfo": "OS 정보",
+        "deviceName": "장치 이름",
         "autoLaunch": "자동 실행",
         "runningMode": "실행 모드",
         "lastCheckUpdate": "마지막 업데이트 확인",

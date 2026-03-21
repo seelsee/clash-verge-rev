@@ -54,6 +54,7 @@ export const translationKeys = [
   "home.components.clashInfo.fields.rulesCount",
   "home.components.systemInfo.title",
   "home.components.systemInfo.fields.osInfo",
+  "home.components.systemInfo.fields.deviceName",
   "home.components.systemInfo.fields.autoLaunch",
   "home.components.systemInfo.fields.runningMode",
   "home.components.systemInfo.fields.lastCheckUpdate",
@@ -773,7 +774,7 @@ export const translationKeys = [
   "tests.unlock.page.empty",
   "tests.unlock.page.messages.detectionFailedWithName",
   "tests.unlock.page.messages.detectionTimeout",
-  "tests.unlock.page.title"
+  "tests.unlock.page.title",
 ] as const;
 
-export type TranslationKey = typeof translationKeys[number];
+export type TranslationKey = (typeof translationKeys)[number];

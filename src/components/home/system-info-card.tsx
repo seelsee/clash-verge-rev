@@ -15,7 +15,7 @@ import useSWR from "swr";
 import { useServiceInstaller } from "@/hooks/use-service-installer";
 import { useSystemState } from "@/hooks/use-system-state";
 import { useVerge } from "@/hooks/use-verge";
-import { getSystemInfo } from "@/services/cmds";
+import { getSystemHostname, getSystemInfo } from "@/services/cmds";
 import { showNotice } from "@/services/notice-service";
 import { checkUpdateSafe as checkUpdate } from "@/services/update";
 import { version as appVersion } from "@root/package.json";
@@ -24,11 +24,13 @@ import { EnhancedCard } from "./enhanced-card";
 
 interface SystemState {
   osInfo: string;
+  deviceName: string;
   lastCheckUpdate: string;
 }
 
 type SystemStateAction =
   | { type: "set-os-info"; payload: string }
+  | { type: "set-device-name"; payload: string }
   | { type: "set-last-check-update"; payload: string };
 
 const systemStateReducer = (
@@ -38,6 +40,8 @@ const systemStateReducer = (
   switch (action.type) {
     case "set-os-info":
       return { ...state, osInfo: action.payload };
+    case "set-device-name":
+      return { ...state, deviceName: action.payload };
     case "set-last-check-update":
       return { ...state, lastCheckUpdate: action.payload };
     default:
@@ -55,6 +59,7 @@ export const SystemInfoCard = () => {
   // 系统信息状态
   const [systemState, dispatchSystemState] = useReducer(systemStateReducer, {
     osInfo: "",
+    deviceName: "",
     lastCheckUpdate: "-",
   });
 
@@ -62,8 +67,12 @@ export const SystemInfoCard = () => {
   useEffect(() => {
     let timeoutId: number | undefined;
 
-    getSystemInfo()
-      .then((info) => {
+    Promise.all([getSystemInfo(), getSystemHostname()])
+      .then(([info, hostname]) => {
+        dispatchSystemState({
+          type: "set-device-name",
+          payload: hostname.trim() || "-",
+        });
         const lines = info.split("\n");
         if (lines.length > 0) {
           const sysName = lines[0].split(": ")[1] || "";
@@ -283,6 +292,15 @@ export const SystemInfoCard = () => {
           </Typography>
           <Typography variant="body2" fontWeight="medium">
             {systemState.osInfo}
+          </Typography>
+        </Stack>
+        <Divider />
+        <Stack direction="row" justifyContent="space-between">
+          <Typography variant="body2" color="text.secondary">
+            {t("home.components.systemInfo.fields.deviceName")}
+          </Typography>
+          <Typography variant="body2" fontWeight="medium">
+            {systemState.deviceName}
           </Typography>
         </Stack>
         <Divider />

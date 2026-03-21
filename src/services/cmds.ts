@@ -396,6 +396,35 @@ export async function getSystemInfo() {
   return invoke<string>("get_system_info");
 }
 
+export interface HardwareInfo {
+  cpuBrand: string;
+  cpuLogicalCores: number;
+  cpuPhysicalCores: number | null;
+  totalMemoryBytes: number;
+}
+
+export async function getHardwareInfo() {
+  return invoke<HardwareInfo>("get_hardware_info");
+}
+
+export interface HardwareDiskInfo {
+  name: string;
+  totalBytes: number;
+}
+
+/** Windows：磁盘 / 显卡 / 网卡 / 主板；其他平台为空字段 */
+export interface WindowsHardwareExtra {
+  disks: HardwareDiskInfo[];
+  gpus: string[];
+  networkAdapters: string[];
+  motherboardManufacturer: string | null;
+  motherboardProduct: string | null;
+}
+
+export async function getWindowsHardwareExtra() {
+  return invoke<WindowsHardwareExtra>("get_windows_hardware_extra");
+}
+
 export async function copyIconFile(
   path: string,
   name: "common" | "sysproxy" | "tun",

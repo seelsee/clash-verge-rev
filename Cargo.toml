@@ -75,6 +75,9 @@ deelevate = "0.2.0"
 [patch.crates-io]
 # Patches until https://github.com/tauri-apps/tao/pull/1167 is merged.
 tao = { git = "https://github.com/tauri-apps/tao" }
+# tauri-build 2.5.3 unwrap() on removing old sidecar binaries fails with PermissionDenied on Windows
+# when the exe is locked (running dev app / AV). Patched: clear read-only, rename fallback, proper error.
+tauri-build = { path = "patches/tauri-build" }
 
 [workspace.lints.clippy]
 correctness = { level = "deny", priority = -1 }

@@ -54,6 +54,7 @@
       "title": "Sistem Bilgisi",
       "fields": {
         "osInfo": "İşletim Sistemi Bilgisi",
+        "deviceName": "Cihaz adı",
         "autoLaunch": "Otomatik Başlatma",
         "runningMode": "Çalışma Modu",
         "lastCheckUpdate": "Son Güncelleme Kontrolü",

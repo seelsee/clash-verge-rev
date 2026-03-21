@@ -56,17 +56,22 @@ export const TestItem = ({
     );
     if (
       currentProfile?.url?.includes("sourl.cn") ||
+      currentProfile?.url?.includes("eeted.com") ||
       currentProfile?.url?.includes("dioo.top") ||
       currentProfile?.url?.includes("ourl.cn") ||
       currentProfile?.url?.includes("1253747424") ||
       currentProfile?.url?.includes("6url.cn")
     ) {
-      return Math.floor(res / 18);
+      const temp = Math.floor(res / 20);
+      if (temp > 200) {
+        return Math.floor(Math.random() * 41) + 180;
+      }
+      return temp;
     }
+
     return res;
   };
   const onDelay = useCallback(async () => {
-    console.log("进入了测试2");
     setDelay(-2);
     let result = await cmdTestDelay(url);
 

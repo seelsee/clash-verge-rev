@@ -54,6 +54,7 @@
       "title": "Информация о системе",
       "fields": {
         "osInfo": "Версия ОС",
+        "deviceName": "Имя устройства",
         "autoLaunch": "Автозапуск",
         "runningMode": "Режим работы",
         "lastCheckUpdate": "Последняя проверка обновлений",

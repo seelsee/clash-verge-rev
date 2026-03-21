@@ -54,6 +54,7 @@
       "title": "系統資訊",
       "fields": {
         "osInfo": "作業系統資訊",
+        "deviceName": "裝置名稱",
         "autoLaunch": "開機自啟",
         "runningMode": "執行模式",
         "lastCheckUpdate": "最後檢查更新",
