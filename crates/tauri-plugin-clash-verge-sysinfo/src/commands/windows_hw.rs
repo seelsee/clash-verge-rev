@@ -32,9 +32,7 @@ pub(super) fn query() -> Result<WindowsHardwareExtra, String> {
     let wmi = WMIConnection::new().map_err(|e| e.to_string())?;
 
     let mut gpus: Vec<String> = wmi
-        .raw_query::<WmiVideoController>(
-            "SELECT Name FROM Win32_VideoController WHERE Name IS NOT NULL",
-        )
+        .raw_query::<WmiVideoController>("SELECT Name FROM Win32_VideoController WHERE Name IS NOT NULL")
         .map_err(|e| e.to_string())?
         .into_iter()
         .filter_map(|r| r.name)
@@ -84,11 +82,7 @@ pub(super) fn query() -> Result<WindowsHardwareExtra, String> {
             }
             (Some(n), None) => {
                 let n = n.trim();
-                if n.is_empty() {
-                    None
-                } else {
-                    Some(n.to_string())
-                }
+                if n.is_empty() { None } else { Some(n.to_string()) }
             }
             _ => None,
         })
