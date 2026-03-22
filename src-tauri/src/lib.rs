@@ -132,6 +132,7 @@ mod app_init {
             tauri_plugin_clash_verge_sysinfo::commands::get_system_info,
             tauri_plugin_clash_verge_sysinfo::commands::get_hardware_info,
             tauri_plugin_clash_verge_sysinfo::commands::get_windows_hardware_extra,
+            tauri_plugin_clash_verge_sysinfo::commands::get_windows_displays,
             tauri_plugin_clash_verge_sysinfo::commands::get_app_uptime,
             tauri_plugin_clash_verge_sysinfo::commands::app_is_admin,
             tauri_plugin_clash_verge_sysinfo::commands::export_diagnostic_info,
