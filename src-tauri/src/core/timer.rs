@@ -126,11 +126,11 @@ impl Timer {
                 profiles_to_update.len()
             );
             let timer_map = self.timer_map.read();
-            let delay_timer = self.delay_timer.write();
 
             for uid in profiles_to_update {
                 if let Some(task) = timer_map.get(&uid) {
                     logging!(info, Type::Timer, "立即执行任务: uid={}", uid);
+                    let delay_timer = self.delay_timer.write();
                     if let Err(e) = delay_timer.advance_task(task.task_id) {
                         logging!(warn, Type::Timer, "Failed to advance task {}: {}", uid, e);
                     }
@@ -409,12 +409,12 @@ impl Timer {
     }
 
     /// Emit update events for frontend notification
-    fn emit_update_event(_uid: &str, _is_start: bool) {
+    fn emit_update_event(uid: &String, is_start: bool) {
         {
-            if _is_start {
-                super::handle::Handle::notify_profile_update_started(_uid.into());
+            if is_start {
+                super::handle::Handle::notify_profile_update_started(uid);
             } else {
-                super::handle::Handle::notify_profile_update_completed(_uid.into());
+                super::handle::Handle::notify_profile_update_completed(uid);
             }
         }
     }
@@ -430,7 +430,7 @@ impl Timer {
             let is_current = Config::profiles().await.latest_arc().current.as_ref() == Some(uid);
             logging!(info, Type::Timer, "配置 {} 是否为当前激活配置: {}", uid, is_current);
 
-            feat::update_profile(uid, None, is_current, false).await
+            feat::update_profile(uid, None, is_current, false, false).await
         })
         .await
         {

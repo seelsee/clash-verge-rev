@@ -15,7 +15,6 @@
         "systemProxy": "Sistem Vekil'i"
       },
       "tooltips": {
-        "autoLaunchAdmin": "Yönetici modu otomatik başlatmayı desteklemeyebilir",
         "silentStart": "Programı paneli görüntülemeden arka plan modunda başlatır"
       },
       "fields": {
@@ -104,7 +103,31 @@
           "webUI": "Web Arayüzü",
           "clashCore": "Clash Çekirdeği",
           "openUwpTool": "UWP Aracını Aç",
-          "updateGeoData": "GeoData'yı Güncelle"
+          "updateGeoData": "GeoData'yı Güncelle",
+          "tunnels": {
+            "title": "Tünel Yönetimi",
+            "localAddr": "Yerel Dinleme Adresi",
+            "localPort": "Yerel Dinleme Portu",
+            "targetAddr": "Hedef Adresi",
+            "targetPort": "Hedef Portu",
+            "proxyGroup": "Proxy Grubu",
+            "proxyNode": "Proxy Düğümü",
+            "protocols": "Protokol",
+            "existing": "Mevcut Tüneller",
+            "default": "Geçerli Yapılandırmayı İzle",
+            "optional": "İsteğe Bağlı",
+            "messages": {
+              "incomplete": "Lütfen gerekli tüm tünel alanlarını doldurun",
+              "invalidLocalAddr": "Geçersiz yerel dinleme adresi",
+              "invalidLocalPort": "Geçersiz yerel dinleme portu",
+              "invalidTargetAddr": "Geçersiz hedef adresi",
+              "invalidTargetPort": "Geçersiz hedef portu"
+            },
+            "actions": {
+              "add": "Ekle",
+              "addNew": "Yeni Tünel Ekle"
+            }
+          }
         },
         "tooltips": {
           "networkInterface": "Ağ Arayüzü",
@@ -211,13 +234,14 @@
           "navIcon": "Gezinme Simgesi",
           "collapseNavBar": "Gezinme çubuğunu daralt",
           "trayIcon": "Tepsi Simgesi",
-          "showProxyGroupsInline": "Show Proxy Groups Inline",
+          "proxyGroupsDisplayMode": "Proxy Groups Display Mode",
           "showOutboundModesInline": "Show Outbound Modes Inline",
           "commonTrayIcon": "Genel Tepsi Simgesi",
           "systemProxyTrayIcon": "Sistem Vekil Tepsi Simgesi",
           "tunTrayIcon": "Tun Tepsi Simgesi",
           "enableTrayIcon": "Tepsi Simgesini Etkinleştir",
-          "enableTraySpeed": "Tepsi Hızını Etkinleştir"
+          "enableTraySpeed": "Tepsi Hızını Etkinleştir",
+          "pauseRenderTrafficStatsOnBlur": "Odak kaybolduğunda trafik istatistiklerinin işlenmesini duraklat"
         },
         "tooltips": {
           "hoverNavigator": "Automatically scroll to the corresponding proxy group when hovering over alphabet letters",
@@ -234,6 +258,11 @@
             "topRight": "Sağ üst",
             "bottomLeft": "Sol alt",
             "bottomRight": "Sağ alt"
+          },
+          "proxyGroupsDisplayMode": {
+            "default": "Default",
+            "inline": "Inline",
+            "disable": "Disable"
           }
         }
       }
@@ -331,7 +360,7 @@
         "scheduleHelper": "Create local backups in the background at the configured interval.",
         "intervalLabel": "Backup frequency",
         "changeLabel": "Backup on critical changes",
-        "changeHelper": "Automatically back up when the global extend config/script or subscriptions are added, removed, or edited.",
+        "changeHelper": "Automatically backup when Global Extend Config/Script changes.",
         "options": {
           "hours": "Every {{n}} hours",
           "days": "Every {{n}} days"
@@ -373,6 +402,7 @@
         "proxyLayoutColumns": "Vekil Düzeni Sütunları",
         "autoLogClean": "Otomatik Günlük Temizleme",
         "autoDelayDetection": "Otomatik Gecikme Tespiti",
+        "autoDelayDetectionInterval": "Otomatik Gecikme Tespiti Aralığı",
         "defaultLatencyTest": "Varsayılan Gecikme Testi",
         "defaultLatencyTimeout": "Varsayılan Gecikme Zaman Aşımı"
       },
@@ -417,6 +447,7 @@
         "proxyGuard": "Vekil Koruyucusu",
         "guardDuration": "Koruma Süresi",
         "alwaysUseDefaultBypass": "Her Zaman Varsayılan Baypas Kullan",
+        "enableBypassCheck": "Proxy baypas biçimini doğrula",
         "proxyBypass": "Vekil Baypas Ayarları: ",
         "bypass": "Baypas: ",
         "pacScriptContent": "PAC Betiği İçeriği"
@@ -439,6 +470,7 @@
         "stack": "Tun Yığını",
         "device": "Device Name",
         "autoRoute": "Otomatik Yönlendirme",
+        "routeExcludeAddress": "Yönlendirme Hariç Adresler",
         "strictRoute": "Katı Yönlendirme",
         "autoDetectInterface": "Arayüzü Otomatik Algıla",
         "dnsHijack": "DNS Ele Geçirme",
@@ -450,7 +482,9 @@
         "autoRedirect": "Automatically configures nftables/iptables TCP redirects"
       },
       "messages": {
-        "applied": "Ayarlar Uygulandı"
+        "applied": "Ayarlar Uygulandı",
+        "invalidRouteExcludeAddress": "Lütfen geçerli bir CIDR bloğu girin",
+        "routeExcludeAddressHint": "Yalnızca IPv4/IPv6 CIDR blokları desteklenir; örneğin 192.168.0.0/16 veya fd00::/8"
       }
     },
     "dns": {

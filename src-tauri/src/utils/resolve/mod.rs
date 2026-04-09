@@ -1,13 +1,14 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use anyhow::Result;
-use flexi_logger::LoggerHandle;
 
 use crate::{
     config::Config,
     core::{
-        CoreManager, Timer, handle,
+        CoreManager, Timer,
+        handle::Handle,
         hotkey::Hotkey,
+        logger::Logger,
         service::{SERVICE_MANAGER, ServiceManager, is_service_ipc_path_exists},
         sysopt,
         tray::Tray,
@@ -22,31 +23,20 @@ use clash_verge_signal;
 
 pub mod dns;
 pub mod scheme;
-pub mod ui;
 pub mod window;
 pub mod window_script;
 
 static RESOLVE_DONE: AtomicBool = AtomicBool::new(false);
 
-pub fn init_work_dir_and_logger() -> Option<LoggerHandle> {
+pub fn init_work_dir_and_logger() -> anyhow::Result<()> {
     AsyncHandler::block_on(async {
         init_work_config().await;
         init_resources().await;
-
-        #[cfg(not(feature = "tauri-dev"))]
-        {
-            logging!(info, Type::Setup, "Initializing logger");
-            init::init_logger().await.ok()
-        }
-        #[cfg(feature = "tauri-dev")]
-        {
-            None
-        }
+        logging!(info, Type::Setup, "Initializing logger");
+        // #[cfg(not(feature = "tokio-trace"))]
+        Logger::global().init().await?;
+        Ok(())
     })
-}
-
-pub fn resolve_setup_handle() {
-    init_handle();
 }
 
 pub fn resolve_setup_sync() {
@@ -72,19 +62,19 @@ pub fn resolve_setup_async() {
             init_system_proxy_guard().await;
         });
 
-        let tray_init = async {
-            init_tray().await;
-            refresh_tray_menu().await;
-        };
-
         let _ = futures::join!(
             core_init,
-            tray_init,
+            init_tray(),
             init_timer(),
             init_hotkey(),
             init_auto_lightweight_boot(),
             init_auto_backup(),
+            init_silent_updater(),
         );
+
+        Handle::refresh_clash();
+        refresh_tray_menu().await;
+        resolve_done();
     });
 }
 
@@ -99,10 +89,6 @@ pub async fn resolve_reset_async() -> Result<(), anyhow::Error> {
     }
 
     Ok(())
-}
-
-pub fn init_handle() {
-    handle::Handle::global().init();
 }
 
 pub(super) fn init_scheme() {
@@ -144,6 +130,32 @@ pub(super) async fn init_auto_backup() {
     logging_error!(Type::Setup, AutoBackupManager::global().init().await);
 }
 
+async fn init_silent_updater() {
+    use crate::core::SilentUpdater;
+    use crate::core::handle::Handle;
+
+    logging!(info, Type::Setup, "Initializing silent updater...");
+
+    let app_handle = Handle::app_handle();
+
+    // Check for cached update and attempt install before main app initialization.
+    // If install succeeds:
+    //   - Windows: NSIS takes over and the process exits automatically
+    //   - macOS/Linux: binary is replaced, we restart the app
+    if SilentUpdater::global().try_install_on_startup(app_handle).await {
+        logging!(info, Type::Setup, "Update installed at startup, restarting...");
+        app_handle.restart();
+    }
+
+    // No pending install — start background check/download loop
+    let app_handle = app_handle.clone();
+    tokio::spawn(async move {
+        SilentUpdater::global().start_background_check(app_handle).await;
+    });
+
+    logging!(info, Type::Setup, "Silent updater initialized");
+}
+
 pub fn init_signal() {
     logging!(info, Type::Setup, "Initializing signal handlers...");
     clash_verge_signal::register(feat::quit);
@@ -154,9 +166,6 @@ pub async fn init_work_config() {
 }
 
 pub(super) async fn init_tray() {
-    if std::env::var("CLASH_VERGE_DISABLE_TRAY").unwrap_or_default() == "1" {
-        return;
-    }
     logging_error!(Type::Setup, Tray::global().init().await);
 }
 
@@ -206,8 +215,4 @@ pub fn resolve_done() {
 
 pub fn is_resolve_done() -> bool {
     RESOLVE_DONE.load(Ordering::Acquire)
-}
-
-pub fn reset_resolve_done() {
-    RESOLVE_DONE.store(false, Ordering::Release);
 }

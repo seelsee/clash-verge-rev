@@ -15,7 +15,6 @@
         "systemProxy": "Systemproxy"
       },
       "tooltips": {
-        "autoLaunchAdmin": "Der Administrator-Modus unterstützt möglicherweise keine automatische Startfunktion.",
         "silentStart": "Die Anwendung wird im Hintergrund gestartet, ohne dass das Programmfenster angezeigt wird."
       },
       "fields": {
@@ -104,7 +103,31 @@
           "webUI": "Web-Oberfläche",
           "clashCore": "Clash-Kern",
           "openUwpTool": "UWP-Tool öffnen",
-          "updateGeoData": "Geo-Daten aktualisieren"
+          "updateGeoData": "Geo-Daten aktualisieren",
+          "tunnels": {
+            "title": "Tunnel-Verwaltung",
+            "localAddr": "Lokale Abhöradresse",
+            "localPort": "Lokaler Abhörport",
+            "targetAddr": "Zieladresse",
+            "targetPort": "Zielport",
+            "proxyGroup": "Proxy-Gruppe",
+            "proxyNode": "Proxy-Knoten",
+            "protocols": "Protokoll",
+            "existing": "Vorhandene Tunnel",
+            "default": "Aktueller Konfiguration folgen",
+            "optional": "Optional",
+            "messages": {
+              "incomplete": "Bitte alle erforderlichen Tunnel-Felder ausfüllen",
+              "invalidLocalAddr": "Ungültige lokale Abhöradresse",
+              "invalidLocalPort": "Ungültiger lokaler Abhörport",
+              "invalidTargetAddr": "Ungültige Zieladresse",
+              "invalidTargetPort": "Ungültiger Zielport"
+            },
+            "actions": {
+              "add": "Hinzufügen",
+              "addNew": "Neuen Tunnel hinzufügen"
+            }
+          }
         },
         "tooltips": {
           "networkInterface": "Netzwerkschnittstelle",
@@ -211,13 +234,14 @@
           "navIcon": "Navigationsleiste-Symbol",
           "collapseNavBar": "Navigationsleiste einklappen",
           "trayIcon": "Tray-Symbol",
-          "showProxyGroupsInline": "Show Proxy Groups Inline",
+          "proxyGroupsDisplayMode": "Proxy Groups Display Mode",
           "showOutboundModesInline": "Show Outbound Modes Inline",
           "commonTrayIcon": "Standard-Tray-Symbol",
           "systemProxyTrayIcon": "Systemproxy-Tray-Symbol",
           "tunTrayIcon": "TUN-Modus-Tray-Symbol",
           "enableTrayIcon": "Tray-Symbol aktivieren",
-          "enableTraySpeed": "Tray-Geschwindigkeit aktivieren"
+          "enableTraySpeed": "Tray-Geschwindigkeit aktivieren",
+          "pauseRenderTrafficStatsOnBlur": "Rendering der Verkehrsstatistiken bei Fokusverlust pausieren"
         },
         "tooltips": {
           "hoverNavigator": "Automatically scroll to the corresponding proxy group when hovering over alphabet letters",
@@ -234,6 +258,11 @@
             "topRight": "Oben rechts",
             "bottomLeft": "Unten links",
             "bottomRight": "Unten rechts"
+          },
+          "proxyGroupsDisplayMode": {
+            "default": "Default",
+            "inline": "Inline",
+            "disable": "Disable"
           }
         }
       }
@@ -331,7 +360,7 @@
         "scheduleHelper": "Create local backups in the background at the configured interval.",
         "intervalLabel": "Backup frequency",
         "changeLabel": "Backup on critical changes",
-        "changeHelper": "Automatically back up when the global extend config/script or subscriptions are added, removed, or edited.",
+        "changeHelper": "Automatically backup when Global Extend Config/Script changes.",
         "options": {
           "hours": "Every {{n}} hours",
           "days": "Every {{n}} days"
@@ -373,6 +402,7 @@
         "proxyLayoutColumns": "Anzahl der Spalten im Proxy-Layout",
         "autoLogClean": "Protokolle automatisch bereinigen",
         "autoDelayDetection": "Automatische Latenzprüfung",
+        "autoDelayDetectionInterval": "Intervall für automatische Latenzprüfung",
         "defaultLatencyTest": "Standard-Testlink",
         "defaultLatencyTimeout": "Test-Timeout"
       },
@@ -417,6 +447,7 @@
         "proxyGuard": "Systemproxy-Schutz",
         "guardDuration": "Proxy-Schutz-Intervall",
         "alwaysUseDefaultBypass": "Immer die Standard-Umgehung verwenden",
+        "enableBypassCheck": "Proxy-Bypass-Format prüfen",
         "proxyBypass": "Proxy-Umgehungseinstellungen: ",
         "bypass": "Aktuelle Umgehung: ",
         "pacScriptContent": "PAC-Skriptinhalt"
@@ -439,6 +470,7 @@
         "stack": "TUN-Modus-Stack",
         "device": "Device Name",
         "autoRoute": "Globale Routing automatisch einstellen",
+        "routeExcludeAddress": "Routen-Ausnahmeadressen",
         "strictRoute": "Strenges Routing",
         "autoDetectInterface": "Netzwerkschnittstelle automatisch auswählen",
         "dnsHijack": "DNS-Hijacking",
@@ -450,7 +482,9 @@
         "autoRedirect": "Automatically configures nftables/iptables TCP redirects"
       },
       "messages": {
-        "applied": "Einstellungen angewendet"
+        "applied": "Einstellungen angewendet",
+        "invalidRouteExcludeAddress": "Bitte geben Sie einen gültigen CIDR-Block ein",
+        "routeExcludeAddressHint": "Es werden nur IPv4-/IPv6-CIDR-Blöcke unterstützt, z. B. 192.168.0.0/16 oder fd00::/8"
       }
     },
     "dns": {

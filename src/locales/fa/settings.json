@@ -15,7 +15,6 @@
         "systemProxy": "پراکسی سیستم"
       },
       "tooltips": {
-        "autoLaunchAdmin": "حالت ادمین ممکن است از راه‌اندازی خودکار پشتیبانی نکند",
         "silentStart": "برنامه را در حالت پس‌زمینه بدون نمایش پانل اجرا کنید"
       },
       "fields": {
@@ -104,7 +103,31 @@
           "webUI": "رابط وب",
           "clashCore": "هسته Clash",
           "openUwpTool": "باز کردن ابزار UWP",
-          "updateGeoData": "به‌روزرسانی GeoData"
+          "updateGeoData": "به‌روزرسانی GeoData",
+          "tunnels": {
+            "title": "مدیریت تونل‌ها",
+            "localAddr": "آدرس شنود محلی",
+            "localPort": "پورت شنود محلی",
+            "targetAddr": "آدرس هدف",
+            "targetPort": "پورت هدف",
+            "proxyGroup": "گروه پراکسی",
+            "proxyNode": "گره پراکسی",
+            "protocols": "پروتکل",
+            "existing": "تونل‌های موجود",
+            "default": "پیروی از تنظیمات فعلی",
+            "optional": "اختیاری",
+            "messages": {
+              "incomplete": "لطفاً تمام فیلدهای الزامی تونل را تکمیل کنید",
+              "invalidLocalAddr": "آدرس شنود محلی نامعتبر است",
+              "invalidLocalPort": "پورت شنود محلی نامعتبر است",
+              "invalidTargetAddr": "آدرس هدف نامعتبر",
+              "invalidTargetPort": "پورت هدف نامعتبر"
+            },
+            "actions": {
+              "add": "افزودن",
+              "addNew": "افزودن تونل جدید"
+            }
+          }
         },
         "tooltips": {
           "networkInterface": "رابط شبکه",
@@ -211,13 +234,14 @@
           "navIcon": "آیکون ناوبری",
           "collapseNavBar": "جمع کردن نوار ناوبری",
           "trayIcon": "آیکون سینی سیستم",
-          "showProxyGroupsInline": "Show Proxy Groups Inline",
+          "proxyGroupsDisplayMode": "Proxy Groups Display Mode",
           "showOutboundModesInline": "Show Outbound Modes Inline",
           "commonTrayIcon": "آیکون مشترک سینی سیستم",
           "systemProxyTrayIcon": "آیکون سینی پراکسی سیستم",
           "tunTrayIcon": "آیکون سینی Tun",
           "enableTrayIcon": "Enable Tray Icon",
-          "enableTraySpeed": "فعال کردن سرعت ترای"
+          "enableTraySpeed": "فعال کردن سرعت ترای",
+          "pauseRenderTrafficStatsOnBlur": "توقف رندر آمار ترافیک هنگام از دست رفتن فوکوس"
         },
         "tooltips": {
           "hoverNavigator": "Automatically scroll to the corresponding proxy group when hovering over alphabet letters",
@@ -234,6 +258,11 @@
             "topRight": "Top Right",
             "bottomLeft": "Bottom Left",
             "bottomRight": "Bottom Right"
+          },
+          "proxyGroupsDisplayMode": {
+            "default": "Default",
+            "inline": "Inline",
+            "disable": "Disable"
           }
         }
       }
@@ -331,7 +360,7 @@
         "scheduleHelper": "Create local backups in the background at the configured interval.",
         "intervalLabel": "Backup frequency",
         "changeLabel": "Backup on critical changes",
-        "changeHelper": "Automatically back up when the global extend config/script or subscriptions are added, removed, or edited.",
+        "changeHelper": "Automatically backup when Global Extend Config/Script changes.",
         "options": {
           "hours": "Every {{n}} hours",
           "days": "Every {{n}} days"
@@ -373,6 +402,7 @@
         "proxyLayoutColumns": "ستون چیدمان پراکسی",
         "autoLogClean": "پاکسازی خودکار لاگ",
         "autoDelayDetection": "تشخیص تأخیر خودکار",
+        "autoDelayDetectionInterval": "فاصله تشخیص تأخیر خودکار",
         "defaultLatencyTest": "آزمون تأخیر پیش‌فرض",
         "defaultLatencyTimeout": "زمان انتظار تأخیر پیش‌فرض"
       },
@@ -417,6 +447,7 @@
         "proxyGuard": "محافظ پراکسی",
         "guardDuration": "مدت محافظت",
         "alwaysUseDefaultBypass": "همیشه از دور زدن پیش‌فرض استفاده کنید",
+        "enableBypassCheck": "اعتبارسنجی قالب دور زدن پراکسی",
         "proxyBypass": "دور زدن پراکسی: ",
         "bypass": "دور زدن: ",
         "pacScriptContent": "محتوای اسکریپت PAC"
@@ -439,6 +470,7 @@
         "stack": "انباشته Tun",
         "device": "Device Name",
         "autoRoute": "مسیر خودکار",
+        "routeExcludeAddress": "نشانی‌های مستثنا از مسیردهی",
         "strictRoute": "مسیر دقیق",
         "autoDetectInterface": "تشخیص خودکار رابط",
         "dnsHijack": "ربایش DNS",
@@ -450,7 +482,9 @@
         "autoRedirect": "پیکربندی خودکار ریدایرکت‌های TCP در nftables/iptables"
       },
       "messages": {
-        "applied": "تنظیمات اعمال شد"
+        "applied": "تنظیمات اعمال شد",
+        "invalidRouteExcludeAddress": "لطفاً یک محدوده CIDR معتبر وارد کنید",
+        "routeExcludeAddressHint": "فقط CIDRهای IPv4/IPv6 پشتیبانی می‌شوند، مانند 192.168.0.0/16 یا fd00::/8"
       }
     },
     "dns": {

@@ -2,6 +2,7 @@ use crate::constants::files::DNS_CONFIG;
 use crate::{config::Config, process::AsyncHandler, utils::dirs};
 use anyhow::Error;
 use arc_swap::{ArcSwap, ArcSwapOption};
+use backon::{ConstantBuilder, Retryable as _};
 use clash_verge_logging::{Type, logging};
 use once_cell::sync::OnceCell;
 use reqwest_dav::list_cmd::{ListEntity, ListFile};
@@ -52,16 +53,16 @@ impl Operation {
 }
 
 pub struct WebDavClient {
-    config: Arc<ArcSwapOption<WebDavConfig>>,
-    clients: Arc<ArcSwap<HashMap<Operation, reqwest_dav::Client>>>,
+    config: ArcSwapOption<WebDavConfig>,
+    clients: ArcSwap<HashMap<Operation, reqwest_dav::Client>>,
 }
 
 impl WebDavClient {
     pub fn global() -> &'static Self {
         static WEBDAV_CLIENT: OnceCell<WebDavClient> = OnceCell::new();
         WEBDAV_CLIENT.get_or_init(|| Self {
-            config: Arc::new(ArcSwapOption::new(None)),
-            clients: Arc::new(ArcSwap::new(Arc::new(HashMap::new()))),
+            config: ArcSwapOption::new(None),
+            clients: ArcSwap::new(Arc::new(HashMap::new())),
         })
     }
 
@@ -146,11 +147,12 @@ impl WebDavClient {
             }
         }
 
-        // 缓存客户端（替换 Arc<Mutex<HashMap<...>>> 的写法）
         {
-            let mut map = (**self.clients.load()).clone();
-            map.insert(op, client.clone());
-            self.clients.store(map.into());
+            self.clients.rcu(|clients_map| {
+                let mut new_map = (**clients_map).clone();
+                new_map.insert(op, client.clone());
+                Arc::new(new_map)
+            });
         }
 
         Ok(client)
@@ -165,40 +167,25 @@ impl WebDavClient {
         let client = self.get_client(Operation::Upload).await?;
         let webdav_path: String = format!("{}/{}", dirs::BACKUP_DIR, file_name).into();
 
-        // 读取文件并上传，如果失败尝试一次重试
         let file_content = fs::read(&file_path).await?;
 
-        // 添加超时保护
-        let upload_result = timeout(
-            Duration::from_secs(TIMEOUT_UPLOAD),
-            client.put(&webdav_path, file_content.clone()),
-        )
-        .await;
+        let backoff = ConstantBuilder::default()
+            .with_delay(Duration::from_millis(500))
+            .with_max_times(1);
 
-        match upload_result {
-            Err(_) => {
-                logging!(warn, Type::Backup, "Warning: Upload timed out, retrying once");
-                tokio::time::sleep(Duration::from_millis(500)).await;
-                timeout(
-                    Duration::from_secs(TIMEOUT_UPLOAD),
-                    client.put(&webdav_path, file_content),
-                )
-                .await??;
-                Ok(())
-            }
-
-            Ok(Err(e)) => {
-                logging!(warn, Type::Backup, "Warning: Upload failed, retrying once: {e}");
-                tokio::time::sleep(Duration::from_millis(500)).await;
-                timeout(
-                    Duration::from_secs(TIMEOUT_UPLOAD),
-                    client.put(&webdav_path, file_content),
-                )
-                .await??;
-                Ok(())
-            }
-            Ok(Ok(_)) => Ok(()),
-        }
+        (|| async {
+            timeout(
+                Duration::from_secs(TIMEOUT_UPLOAD),
+                client.put(&webdav_path, file_content.clone()),
+            )
+            .await??;
+            Ok::<(), Error>(())
+        })
+        .retry(backoff)
+        .notify(|err, dur| {
+            logging!(warn, Type::Backup, "Upload failed: {err}, retrying in {dur:?}");
+        })
+        .await
     }
 
     pub async fn download(&self, filename: String, storage_path: PathBuf) -> Result<(), Error> {

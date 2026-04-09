@@ -15,7 +15,6 @@
         "systemProxy": "Системалы прокси"
       },
       "tooltips": {
-        "autoLaunchAdmin": "Administrator mode may not support auto launch",
         "silentStart": "Программаны фоновый режимда, тәрәзәсез эшләтеп җибәрү"
       },
       "fields": {
@@ -104,7 +103,31 @@
           "webUI": "Веб-интерфейс",
           "clashCore": "Clash ядросы",
           "openUwpTool": "UWP инструментын ачу",
-          "updateGeoData": "GeoData яңарту"
+          "updateGeoData": "GeoData яңарту",
+          "tunnels": {
+            "title": "Tunnel İdäräse",
+            "localAddr": "Urınçı Adres",
+            "localPort": "Urınçı Port",
+            "targetAddr": "Максат адресы",
+            "targetPort": "Максат порты",
+            "proxyGroup": "Proxy Törkeme",
+            "proxyNode": "Proxy Töyene",
+            "protocols": "Protokollar",
+            "existing": "Bar Tunnel'lär",
+            "default": "Xäzerge Köyläwlärgä iärü",
+            "optional": "Mäcbüri tügel",
+            "messages": {
+              "incomplete": "Böten tunnel mäğlümatların tutırıgız",
+              "invalidLocalAddr": "Döres tügel urınçı adres",
+              "invalidLocalPort": "Döres tügel urınçı port",
+              "invalidTargetAddr": "Дөрес түгел максат адресы",
+              "invalidTargetPort": "Дөрес түгел максат порты"
+            },
+            "actions": {
+              "add": "Östäw",
+              "addNew": "Yaña Tunnel Östäw"
+            }
+          }
         },
         "tooltips": {
           "networkInterface": "Челтәр интерфейсы",
@@ -211,13 +234,14 @@
           "navIcon": "Навигация иконкасы",
           "collapseNavBar": "Навигация панелен җыю",
           "trayIcon": "Трей иконкасы",
-          "showProxyGroupsInline": "Show Proxy Groups Inline",
+          "proxyGroupsDisplayMode": "Proxy Groups Display Mode",
           "showOutboundModesInline": "Show Outbound Modes Inline",
           "commonTrayIcon": "Гомуми трей иконкасы",
           "systemProxyTrayIcon": "Системалы прокси иконкасы",
           "tunTrayIcon": "Tun (виртуаль адаптер) иконкасы",
           "enableTrayIcon": "Enable Tray Icon",
-          "enableTraySpeed": "Трей скоростьне үстерү"
+          "enableTraySpeed": "Трей скоростьне үстерү",
+          "pauseRenderTrafficStatsOnBlur": "Фокус югалганда трафик статистикасын сызуны туктатып тору"
         },
         "tooltips": {
           "hoverNavigator": "Automatically scroll to the corresponding proxy group when hovering over alphabet letters",
@@ -234,6 +258,11 @@
             "topRight": "Top Right",
             "bottomLeft": "Bottom Left",
             "bottomRight": "Bottom Right"
+          },
+          "proxyGroupsDisplayMode": {
+            "default": "Default",
+            "inline": "Inline",
+            "disable": "Disable"
           }
         }
       }
@@ -331,7 +360,7 @@
         "scheduleHelper": "Create local backups in the background at the configured interval.",
         "intervalLabel": "Backup frequency",
         "changeLabel": "Backup on critical changes",
-        "changeHelper": "Automatically back up when the global extend config/script or subscriptions are added, removed, or edited.",
+        "changeHelper": "Automatically backup when Global Extend Config/Script changes.",
         "options": {
           "hours": "Every {{n}} hours",
           "days": "Every {{n}} days"
@@ -373,6 +402,7 @@
         "proxyLayoutColumns": "Прокси күрсәтү баганалары саны",
         "autoLogClean": "Логларны автоматик чистарту",
         "autoDelayDetection": "Автоматик тоткарлык ачыклау",
+        "autoDelayDetectionInterval": "Автоматик тоткарлык ачыклау интервалы",
         "defaultLatencyTest": "Тоткарлануны тикшерү сылтамасы (defaults)",
         "defaultLatencyTimeout": "Тоткарлануның стандарт таймауты"
       },
@@ -417,6 +447,7 @@
         "proxyGuard": "Прокси саклаучы",
         "guardDuration": "Саклау вакыты",
         "alwaysUseDefaultBypass": "Һәрвакыт төп Bypass-ны куллану",
+        "enableBypassCheck": "Прокси урап узу форматын тикшерү",
         "proxyBypass": "Проксины әйләнеп узу:",
         "bypass": "Әйләнеп узу:",
         "pacScriptContent": "PAC скрипты эчтәлеге"
@@ -439,6 +470,7 @@
         "stack": "Стек",
         "device": "Device Name",
         "autoRoute": "Авто-маршрутлау",
+        "routeExcludeAddress": "Route Exclude Address",
         "strictRoute": "Катгый маршрутлау",
         "autoDetectInterface": "Интерфейсны автоматик ачыклау",
         "dnsHijack": "DNS'ны үзгәртеп тоту (hijack)",
@@ -450,7 +482,9 @@
         "autoRedirect": "Automatically configures nftables/iptables TCP redirects"
       },
       "messages": {
-        "applied": "Көйләүләр кулланылды"
+        "applied": "Көйләүләр кулланылды",
+        "invalidRouteExcludeAddress": "Дөрес CIDR блогын кертегез",
+        "routeExcludeAddressHint": "IPv4/IPv6 CIDR блоклары гына хуплана, мәсәлән 192.168.0.0/16 яки fd00::/8"
       }
     },
     "dns": {
