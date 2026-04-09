@@ -103,7 +103,31 @@
           "webUI": "Web UI",
           "clashCore": "Clash Core",
           "openUwpTool": "Open UWP tool",
-          "updateGeoData": "Update GeoData"
+          "updateGeoData": "Update GeoData",
+          "tunnels": {
+            "title": "Tunnel Management",
+            "localAddr": "Local Listen Address",
+            "localPort": "Local Listen Port",
+            "targetAddr": "Target Address",
+            "targetPort": "Target Port",
+            "proxyGroup": "Proxy Group",
+            "proxyNode": "Proxy Node",
+            "protocols": "Protocol",
+            "existing": "Existing Tunnels",
+            "default": "Follow Current Configuration",
+            "optional": "Optional",
+            "messages": {
+              "incomplete": "Please fill in all required tunnel fields",
+              "invalidLocalAddr": "Invalid local listen address",
+              "invalidLocalPort": "Invalid local listen port",
+              "invalidTargetAddr": "Invalid Target Address",
+              "invalidTargetPort": "Invalid Target Port"
+            },
+            "actions": {
+              "add": "Add",
+              "addNew": "Add New Tunnel"
+            }
+          }
         },
         "tooltips": {
           "networkInterface": "Network Interface",
@@ -216,7 +240,8 @@
           "systemProxyTrayIcon": "System Proxy Tray Icon",
           "tunTrayIcon": "Tun Tray Icon",
           "enableTrayIcon": "Enable Tray Icon",
-          "enableTraySpeed": "Enable Tray Speed"
+          "enableTraySpeed": "Enable Tray Speed",
+          "pauseRenderTrafficStatsOnBlur": "Pause rendering traffic statistics when blurred"
         },
         "tooltips": {
           "hoverNavigator": "Automatically scroll to the corresponding proxy group when hovering over alphabet letters",
@@ -335,7 +360,7 @@
         "scheduleHelper": "Create local backups in the background at the configured interval.",
         "intervalLabel": "Backup frequency",
         "changeLabel": "Backup on critical changes",
-        "changeHelper": "Automatically back up when the global extend config/script or subscriptions are added, removed, or edited.",
+        "changeHelper": "Automatically backup when Global Extend Config/Script changes.",
         "options": {
           "hours": "Every {{n}} hours",
           "days": "Every {{n}} days"
@@ -377,6 +402,7 @@
         "proxyLayoutColumns": "Proxy Layout Columns",
         "autoLogClean": "Auto Log Clean",
         "autoDelayDetection": "Auto Delay Detection",
+        "autoDelayDetectionInterval": "Auto Delay Detection Interval",
         "defaultLatencyTest": "Default Latency Test",
         "defaultLatencyTimeout": "Default Latency Timeout"
       },
@@ -456,7 +482,9 @@
         "autoRedirect": "Automatically configures nftables/iptables TCP redirects"
       },
       "messages": {
-        "applied": "Settings Applied"
+        "applied": "Settings Applied",
+        "invalidRouteExcludeAddress": "Please enter a valid CIDR block",
+        "routeExcludeAddressHint": "Only IPv4/IPv6 CIDR is supported, such as 192.168.0.0/16 or fd00::/8"
       }
     },
     "dns": {

@@ -103,7 +103,31 @@
           "webUI": "واجهة الويب",
           "clashCore": "نواة Clash",
           "openUwpTool": "فتح أداة UWP",
-          "updateGeoData": "تحديث البيانات الجغرافية"
+          "updateGeoData": "تحديث البيانات الجغرافية",
+          "tunnels": {
+            "title": "إدارة الأنفاق",
+            "localAddr": "عنوان الاستماع المحلي",
+            "localPort": "منفذ الاستماع المحلي",
+            "targetAddr": "عنوان الهدف",
+            "targetPort": "منفذ الهدف",
+            "proxyGroup": "مجموعة الوكيل",
+            "proxyNode": "عقدة الوكيل",
+            "protocols": "البروتوكول",
+            "existing": "الأنفاق الموجودة",
+            "default": "اتباع الإعدادات الحالية",
+            "optional": "اختياري",
+            "messages": {
+              "incomplete": "يرجى تعبئة جميع حقول النفق المطلوبة",
+              "invalidLocalAddr": "عنوان الاستماع المحلي غير صالح",
+              "invalidLocalPort": "منفذ الاستماع المحلي غير صالح",
+              "invalidTargetAddr": "عنوان الهدف غير صالح",
+              "invalidTargetPort": "منفذ الهدف غير صالح"
+            },
+            "actions": {
+              "add": "إضافة",
+              "addNew": "إضافة نفق جديد"
+            }
+          }
         },
         "tooltips": {
           "networkInterface": "واجهة الشبكة",
@@ -216,7 +240,8 @@
           "systemProxyTrayIcon": "أيقونة شريط المهام لوكيل النظام",
           "tunTrayIcon": "أيقونة شريط المهام لـ TUN",
           "enableTrayIcon": "Enable Tray Icon",
-          "enableTraySpeed": "تفعيل سرعة التراي"
+          "enableTraySpeed": "تفعيل سرعة التراي",
+          "pauseRenderTrafficStatsOnBlur": "إيقاف عرض إحصاءات حركة المرور مؤقتًا عند فقدان التركيز"
         },
         "tooltips": {
           "hoverNavigator": "Automatically scroll to the corresponding proxy group when hovering over alphabet letters",
@@ -335,7 +360,7 @@
         "scheduleHelper": "Create local backups in the background at the configured interval.",
         "intervalLabel": "Backup frequency",
         "changeLabel": "Backup on critical changes",
-        "changeHelper": "Automatically back up when the global extend config/script or subscriptions are added, removed, or edited.",
+        "changeHelper": "Automatically backup when Global Extend Config/Script changes.",
         "options": {
           "hours": "Every {{n}} hours",
           "days": "Every {{n}} days"
@@ -377,6 +402,7 @@
         "proxyLayoutColumns": "أعمدة عرض الوكيل",
         "autoLogClean": "تنظيف السجلات تلقائيًا",
         "autoDelayDetection": "اكتشاف التأخير التلقائي",
+        "autoDelayDetectionInterval": "الفاصل الزمني لاكتشاف التأخير التلقائي",
         "defaultLatencyTest": "اختبار التأخير الافتراضي",
         "defaultLatencyTimeout": "مهلة التأخير الافتراضية"
       },
@@ -456,7 +482,9 @@
         "autoRedirect": "Automatically configures nftables/iptables TCP redirects"
       },
       "messages": {
-        "applied": "تم تطبيق الإعدادات"
+        "applied": "تم تطبيق الإعدادات",
+        "invalidRouteExcludeAddress": "يرجى إدخال نطاق CIDR صالح",
+        "routeExcludeAddressHint": "يتم دعم CIDR لـ IPv4/IPv6 فقط، مثل 192.168.0.0/16 أو fd00::/8"
       }
     },
     "dns": {

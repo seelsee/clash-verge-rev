@@ -1,33 +1,33 @@
-import { Box, Grid } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { Box, Grid } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 
-import { BasePage } from "@/components/base";
-import SettingClash from "@/components/setting/setting-clash";
-import SettingSystem from "@/components/setting/setting-system";
-import SettingVergeAdvanced from "@/components/setting/setting-verge-advanced";
-import SettingVergeBasic from "@/components/setting/setting-verge-basic";
-import { showNotice } from "@/services/notice-service";
-import { useThemeMode } from "@/services/states";
+import { BasePage } from '@/components/base'
+import SettingClash from '@/components/setting/setting-clash'
+import SettingSystem from '@/components/setting/setting-system'
+import SettingVergeAdvanced from '@/components/setting/setting-verge-advanced'
+import SettingVergeBasic from '@/components/setting/setting-verge-basic'
+import { showNotice } from '@/services/notice-service'
+import { useThemeMode } from '@/services/states'
 
 const SettingPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const onError = (err: any) => {
-    showNotice.error(err);
-  };
+    showNotice.error(err)
+  }
 
-  const mode = useThemeMode();
-  const isDark = mode === "light" ? false : true;
+  const mode = useThemeMode()
+  const isDark = mode === 'light' ? false : true
 
   return (
-    <BasePage title={t("settings.page.title")}>
+    <BasePage title={t('settings.page.title')}>
       <Grid container spacing={1.5} columns={{ xs: 6, sm: 6, md: 12 }}>
         <Grid size={6}>
           <Box
             sx={{
               borderRadius: 2,
               marginBottom: 1.5,
-              backgroundColor: isDark ? "#282a36" : "#ffffff",
+              backgroundColor: isDark ? '#282a36' : '#ffffff',
             }}
           >
             <SettingSystem onError={onError} />
@@ -35,7 +35,7 @@ const SettingPage = () => {
           <Box
             sx={{
               borderRadius: 2,
-              backgroundColor: isDark ? "#282a36" : "#ffffff",
+              backgroundColor: isDark ? '#282a36' : '#ffffff',
             }}
           >
             <SettingClash onError={onError} />
@@ -46,7 +46,7 @@ const SettingPage = () => {
             sx={{
               borderRadius: 2,
               marginBottom: 1.5,
-              backgroundColor: isDark ? "#282a36" : "#ffffff",
+              backgroundColor: isDark ? '#282a36' : '#ffffff',
             }}
           >
             <SettingVergeBasic onError={onError} />
@@ -54,7 +54,7 @@ const SettingPage = () => {
           <Box
             sx={{
               borderRadius: 2,
-              backgroundColor: isDark ? "#282a36" : "#ffffff",
+              backgroundColor: isDark ? '#282a36' : '#ffffff',
             }}
           >
             <SettingVergeAdvanced onError={onError} />
@@ -62,7 +62,7 @@ const SettingPage = () => {
         </Grid>
       </Grid>
     </BasePage>
-  );
-};
+  )
+}
 
-export default SettingPage;
+export default SettingPage

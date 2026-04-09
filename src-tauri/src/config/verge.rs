@@ -49,6 +49,9 @@ pub struct IVerge {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enable_group_icon: Option<bool>,
 
+    /// pause render traffic stats on blur
+    pub pause_render_traffic_stats_on_blur: Option<bool>,
+
     /// common tray icon
     #[serde(skip_serializing_if = "Option::is_none")]
     pub common_tray_icon: Option<bool>,
@@ -154,6 +157,9 @@ pub struct IVerge {
 
     /// 是否自动检测当前节点延迟
     pub enable_auto_delay_detection: Option<bool>,
+
+    /// 自动检测当前节点延迟的间隔（分钟）
+    pub auto_delay_detection_interval_minutes: Option<u64>,
 
     /// 是否使用内部的脚本支持，默认为真
     pub enable_builtin_enhanced: Option<bool>,
@@ -388,6 +394,7 @@ impl IVerge {
             traffic_graph: Some(true),
             enable_memory_usage: Some(true),
             enable_group_icon: Some(true),
+            pause_render_traffic_stats_on_blur: Some(true),
             #[cfg(target_os = "macos")]
             tray_icon: Some("monochrome".into()),
             menu_icon: Some("monochrome".into()),
@@ -475,6 +482,7 @@ impl IVerge {
         patch!(traffic_graph);
         patch!(enable_memory_usage);
         patch!(enable_group_icon);
+        patch!(pause_render_traffic_stats_on_blur);
         #[cfg(target_os = "macos")]
         patch!(tray_icon);
         patch!(menu_icon);
@@ -523,6 +531,7 @@ impl IVerge {
         patch!(default_latency_test);
         patch!(default_latency_timeout);
         patch!(enable_auto_delay_detection);
+        patch!(auto_delay_detection_interval_minutes);
         patch!(enable_builtin_enhanced);
         patch!(proxy_layout_column);
         patch!(test_list);
