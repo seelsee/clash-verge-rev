@@ -249,6 +249,8 @@ class DelayManager {
 
       delay = await this.magicDelay(delay)
       debugLog(`[DelayManager] 延迟测试完成，代理: ${name}, 结果: ${delay}ms`)
+      const elapsed = Date.now() - startTime
+      return this.setDelay(name, group, delay, { elapsed })
     } catch (error) {
       // 确保至少显示500ms的加载动画
       await new Promise((resolve) => setTimeout(resolve, 500))

@@ -10,10 +10,23 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router'
 import { MihomoWebSocket } from 'tauri-plugin-mihomo-api'
 
+import { version as appVersion } from '../package.json'
+
 import { BaseErrorBoundary } from './components/base'
 import { router } from './pages/_routers'
 import { AppDataProvider } from './providers/app-data-provider'
 import { WindowProvider } from './providers/window'
+import { getIpInfo } from './services/api'
+import {
+  getHardwareInfo,
+  getProfiles,
+  getSystemHostname,
+  getSystemInfo,
+  getWindowsDisplays,
+  getWindowsHardwareExtra,
+  type WindowsHardwareExtra,
+  type WindowsMemoryModule,
+} from './services/cmds'
 import { FALLBACK_LANGUAGE, initializeLanguage } from './services/i18n'
 import {
   preloadAppData,
@@ -26,6 +39,7 @@ import {
   UpdateStateProvider,
 } from './services/states'
 import { disableWebViewShortcuts } from './utils/disable-webview-shortcuts'
+import getSystem from './utils/get-system'
 
 if (!window.ResizeObserver) {
   window.ResizeObserver = ResizeObserver
