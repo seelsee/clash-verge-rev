@@ -412,6 +412,11 @@ export async function getHardwareInfo() {
 export interface HardwareDiskInfo {
   name: string
   totalBytes: number
+  availableBytes: number
+}
+
+export async function getDisks() {
+  return invoke<HardwareDiskInfo[]>('get_disks')
 }
 
 export interface WindowsGpuAdapter {

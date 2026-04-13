@@ -1,5 +1,6 @@
 use parking_lot::RwLock;
 use serde::Serialize;
+use sysinfo::Disks;
 use sysinfo::System;
 use tauri::{AppHandle, Runtime, State, command};
 use tauri_plugin_clipboard_manager::{ClipboardExt as _, Error};
@@ -31,6 +32,7 @@ pub struct HardwareInfo {
 pub struct HardwareDiskInfo {
     pub name: String,
     pub total_bytes: u64,
+    pub available_bytes: u64,
 }
 
 /// 显卡名称、厂商（`AdapterCompatibility`）与显存（`AdapterRAM`，部分驱动可能不准或为 0）
@@ -136,6 +138,29 @@ pub fn get_hardware_info() -> Result<HardwareInfo, String> {
         total_memory_bytes,
         available_memory_bytes,
     })
+}
+
+/// 跨平台：磁盘列表与容量（字节）
+///
+/// - Windows：返回卷列表（与 `get_windows_hardware_extra().physical_disks` 的物理盘维度不同）
+/// - macOS/Linux：返回系统枚举到的磁盘/卷
+#[command]
+pub fn get_disks() -> Result<Vec<HardwareDiskInfo>, String> {
+    let sys_disks = Disks::new_with_refreshed_list();
+    let mut disks: Vec<HardwareDiskInfo> = sys_disks
+        .list()
+        .iter()
+        .map(|d| HardwareDiskInfo {
+            name: d.name().to_string_lossy().into_owned(),
+            total_bytes: d.total_space(),
+            available_bytes: d.available_space(),
+        })
+        .filter(|d| d.total_bytes > 0)
+        .collect();
+
+    disks.sort_by(|a, b| a.name.cmp(&b.name));
+    disks.dedup_by(|a, b| a.name == b.name && a.total_bytes == b.total_bytes);
+    Ok(disks)
 }
 
 /// Windows：显示器厂商/型号（WMI）与物理尺寸推算对角线英寸。非 Windows 返回空数组。

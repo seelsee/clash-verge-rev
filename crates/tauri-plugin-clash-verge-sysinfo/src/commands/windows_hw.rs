@@ -302,6 +302,7 @@ pub(super) fn query() -> Result<WindowsHardwareExtra, String> {
         .map(|d| HardwareDiskInfo {
             name: d.name().to_string_lossy().into_owned(),
             total_bytes: d.total_space(),
+            available_bytes: d.available_space(),
         })
         .filter(|d| d.total_bytes > 0)
         .collect();

