@@ -165,6 +165,7 @@ pub fn get_disks() -> Result<Vec<HardwareDiskInfo>, String> {
 
 /// Windows：显示器厂商/型号（WMI）与物理尺寸推算对角线英寸。非 Windows 返回空数组。
 #[command]
+#[allow(clippy::missing_const_for_fn)]
 pub fn get_windows_displays() -> Result<Vec<WindowsDisplayMonitor>, String> {
     #[cfg(windows)]
     {
