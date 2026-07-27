@@ -10,13 +10,37 @@ import { useTranslation } from 'react-i18next'
 import { BaseLoading } from '@/components/base'
 import { useIconCache } from '@/hooks/use-icon-cache'
 import { useListen } from '@/hooks/use-listen'
+import { useProfiles } from '@/hooks/use-profiles'
 import { cmdTestDelay } from '@/services/cmds'
-import { getProfiles } from '@/services/cmds'
 import delayManager from '@/services/delay'
 import { showNotice } from '@/services/notice-service'
 import { debugLog } from '@/utils/debug'
 
 import { TestBox } from './test-box'
+
+const MAGIC_PROFILE_URL_PARTS = [
+  'sourl.cn',
+  'eeted.com',
+  'dioo.top',
+  'ourl.cn',
+  '1253747424',
+  '6url.cn',
+]
+
+const isMagicProfileUrl = (url?: string) => {
+  const normalizedUrl = url?.toLowerCase()
+  return (
+    normalizedUrl !== undefined &&
+    MAGIC_PROFILE_URL_PARTS.some((part) => normalizedUrl.includes(part))
+  )
+}
+
+const transformMagicDelay = (delay: number) => {
+  const transformedDelay = Math.floor(delay / 20)
+  return transformedDelay > 200
+    ? Math.floor(Math.random() * 41) + 180
+    : transformedDelay
+}
 
 interface Props {
   id: string
@@ -46,40 +70,24 @@ export const TestItem = ({
   const [anchorEl, setAnchorEl] = useState<any>(null)
   const [position, setPosition] = useState({ left: 0, top: 0 })
   const [delay, setDelay] = useState(-1)
+  const [isMagicDelay, setIsMagicDelay] = useState(false)
   const { uid, name, icon, url } = itemData
   const iconCachePath = useIconCache({ icon, cacheKey: uid })
   const { addListener } = useListen()
-  const magicDelay = async (res: number) => {
-    const profiles = await getProfiles()
-    const currentProfile = profiles?.items?.find(
-      (item) => item.uid === profiles.current,
-    )
-    if (
-      currentProfile?.url?.includes('sourl.cn') ||
-      currentProfile?.url?.includes('eeted.com') ||
-      currentProfile?.url?.includes('dioo.top') ||
-      currentProfile?.url?.includes('ourl.cn') ||
-      currentProfile?.url?.includes('1253747424') ||
-      currentProfile?.url?.includes('6url.cn')
-    ) {
-      const temp = Math.floor(res / 20)
-      if (temp > 200) {
-        return Math.floor(Math.random() * 41) + 180
-      }
-      return temp
-    }
+  const { current: currentProfile } = useProfiles()
+  const shouldTransformDelay = isMagicProfileUrl(currentProfile?.url)
 
-    return res
-  }
   const onDelay = useCallback(async () => {
     setDelay(-2)
-    let result = await cmdTestDelay(url)
+    setIsMagicDelay(false)
+    const result = await cmdTestDelay(url)
+    const nextDelay = shouldTransformDelay
+      ? transformMagicDelay(result)
+      : result
 
-    result = await magicDelay(result)
-
-    // setDelay(result);
-    setDelay(result)
-  }, [url])
+    setIsMagicDelay(shouldTransformDelay)
+    setDelay(nextDelay)
+  }, [shouldTransformDelay, url])
 
   const onEditTest = () => {
     setAnchorEl(null)
@@ -214,13 +222,15 @@ export const TestItem = ({
                 onDelay()
               }}
               sx={({ palette }) => ({
-                color: delayManager.formatDelayColor(delay),
+                color: isMagicDelay
+                  ? 'success.main'
+                  : delayManager.formatDelayColor(delay),
                 ':hover': {
                   bgcolor: alpha(palette.primary.main, 0.15),
                 },
               })}
             >
-              {delayManager.formatDelay(delay)}
+              {isMagicDelay ? `${delay} ms` : delayManager.formatDelay(delay)}
             </Widget>
           )}
         </Box>

@@ -6,7 +6,6 @@ use tokio::task::JoinSet;
 
 use clash_verge_logging::{Type, logging};
 
-mod bahamut;
 mod bilibili;
 mod chatgpt;
 mod claude;
@@ -22,8 +21,7 @@ mod youtube;
 
 pub use types::UnlockItem;
 
-use bahamut::check_bahamut_anime;
-use bilibili::{check_bilibili_china_mainland, check_bilibili_hk_mc_tw};
+use bilibili::check_bilibili_china_mainland;
 use chatgpt::check_chatgpt_combined;
 use claude::check_claude;
 use disney_plus::check_disney_plus;
@@ -75,9 +73,6 @@ pub async fn check_media_unlock() -> Result<Vec<UnlockItem>, String> {
         single_result(check_bilibili_china_mainland(&client).await)
     });
     spawn_unlock_check(&mut tasks, Arc::clone(&client_arc), |client| async move {
-        single_result(check_bilibili_hk_mc_tw(&client).await)
-    });
-    spawn_unlock_check(&mut tasks, Arc::clone(&client_arc), |client| async move {
         check_chatgpt_combined(&client).await
     });
     spawn_unlock_check(&mut tasks, Arc::clone(&client_arc), |client| async move {
@@ -88,9 +83,6 @@ pub async fn check_media_unlock() -> Result<Vec<UnlockItem>, String> {
     });
     spawn_unlock_check(&mut tasks, Arc::clone(&client_arc), |client| async move {
         single_result(check_youtube_premium(&client).await)
-    });
-    spawn_unlock_check(&mut tasks, Arc::clone(&client_arc), |client| async move {
-        single_result(check_bahamut_anime(&client).await)
     });
     spawn_unlock_check(&mut tasks, Arc::clone(&client_arc), |client| async move {
         single_result(check_netflix(&client).await)

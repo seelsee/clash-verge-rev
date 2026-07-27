@@ -51,6 +51,10 @@ const STATUS_LABEL_KEYS: Record<string, string> = {
 }
 
 const normalizeUnlockName = (name: string) => name.trim().toLowerCase()
+const HIDDEN_UNLOCK_ITEM_NAMES = new Set([
+  normalizeUnlockName('哔哩哔哩港澳台'),
+  normalizeUnlockName('Bahamut Anime'),
+])
 
 const getStatusPriority = (status: string) => (status === 'Pending' ? 0 : 1)
 const mergeOptionalFields = (preferred: UnlockItem, fallback: UnlockItem) => ({
@@ -64,6 +68,8 @@ const dedupeUnlockItems = (items: UnlockItem[]) => {
 
   items.forEach((item) => {
     const key = normalizeUnlockName(item.name)
+    if (HIDDEN_UNLOCK_ITEM_NAMES.has(key)) return
+
     const existing = map.get(key)
 
     if (!existing) {

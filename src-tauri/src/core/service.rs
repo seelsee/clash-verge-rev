@@ -510,6 +510,10 @@ pub(super) async fn run_core_by_service(config_file: &PathBuf) -> Result<()> {
 
     SERVICE_MANAGER.refresh().await?;
 
+    if !matches!(SERVICE_MANAGER.current().await, ServiceStatus::Ready) {
+        bail!("service requires manual reinstall before it can be used");
+    }
+
     logging!(info, Type::Service, "服务已运行且版本匹配，直接使用");
     start_with_existing_service(config_file).await
 }
@@ -561,6 +565,9 @@ pub async fn is_service_available() -> Result<()> {
         return Err(e.into());
     }
     clash_verge_service_ipc::connect().await?;
+    if clash_verge_service_ipc::is_reinstall_service_needed().await {
+        bail!("service version mismatch; manual reinstall required");
+    }
     Ok(())
 }
 
@@ -645,12 +652,18 @@ impl ServiceManager {
 
     pub async fn refresh(&self) -> Result<()> {
         self.run_operation(async {
-            self.apply_service_status(if clash_verge_service_ipc::is_reinstall_service_needed().await {
-                ServiceStatus::NeedsReinstall
+            if clash_verge_service_ipc::is_reinstall_service_needed().await {
+                logging!(
+                    warn,
+                    Type::Service,
+                    "service version mismatch; waiting for an explicit reinstall or repair request"
+                );
+                self.set_status(ServiceStatus::NeedsReinstall);
             } else {
-                ServiceStatus::Ready
-            })
-            .await
+                self.set_status(ServiceStatus::Ready);
+                logging!(info, Type::Service, "服务就绪，直接启动");
+            }
+            Ok(())
         })
         .await
     }

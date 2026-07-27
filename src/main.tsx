@@ -33,11 +33,7 @@ import {
   getPreloadConfig,
 } from './services/preload'
 import { swrConfig } from './services/query-client'
-import {
-  LoadingCacheProvider,
-  ThemeModeProvider,
-  UpdateStateProvider,
-} from './services/states'
+import { LoadingCacheProvider, ThemeModeProvider } from './services/states'
 import { disableWebViewShortcuts } from './utils/disable-webview-shortcuts'
 import getSystem from './utils/get-system'
 
@@ -58,7 +54,6 @@ const initializeApp = (initialThemeMode: 'light' | 'dark') => {
   const contexts = [
     <ThemeModeProvider key="theme" initialState={initialThemeMode} />,
     <LoadingCacheProvider key="loading" />,
-    <UpdateStateProvider key="update" />,
   ]
 
   const root = createRoot(container)
@@ -210,19 +205,12 @@ const getInfo = async () => {
       getProfiles(),
     ])
 
-    const lines = rawSystem.split('\n')
-    let osLabel = rawSystem.trim()
-    if (lines.length > 0) {
-      const sysName = lines[0].split(': ')[1] || ''
-      let sysVersion = lines[1]?.split(': ')[1] || ''
-      if (
-        sysName &&
-        sysVersion.toLowerCase().startsWith(sysName.toLowerCase())
-      ) {
-        sysVersion = sysVersion.substring(sysName.length).trim()
-      }
-      osLabel = `${sysName} ${sysVersion}`.trim()
+    const sysName = rawSystem.system_name
+    let sysVersion = rawSystem.system_version
+    if (sysName && sysVersion.toLowerCase().startsWith(sysName.toLowerCase())) {
+      sysVersion = sysVersion.substring(sysName.length).trim()
     }
+    const osLabel = `${sysName} ${sysVersion}`.trim()
     const memGiB = (hw.totalMemoryBytes / 1024 ** 3).toFixed(2)
     const memAvailGiB = (hw.availableMemoryBytes / 1024 ** 3).toFixed(2)
     const scr = getScreenInfo()
