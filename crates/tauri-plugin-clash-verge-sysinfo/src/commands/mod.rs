@@ -12,6 +12,31 @@ mod windows_display;
 #[cfg(windows)]
 mod windows_hw;
 
+#[derive(Serialize)]
+pub struct SystemInfo {
+    pub system_name: String,
+    pub system_version: String,
+    pub system_kernel_version: String,
+    pub system_arch: String,
+    pub app_version: String,
+    pub app_core_mode: String,
+    pub app_is_admin: bool,
+}
+
+impl From<Platform> for SystemInfo {
+    fn from(platform: Platform) -> Self {
+        Self {
+            system_name: platform.sysinfo.system_name,
+            system_version: platform.sysinfo.system_version,
+            system_kernel_version: platform.sysinfo.system_kernel_version,
+            system_arch: platform.sysinfo.system_arch,
+            app_version: platform.appinfo.app_version,
+            app_core_mode: platform.appinfo.app_core_mode,
+            app_is_admin: platform.appinfo.app_is_admin,
+        }
+    }
+}
+
 /// CPU / 内存信息（屏幕分辨率在 WebView 中用 `window.screen` 读取）
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -190,10 +215,10 @@ pub fn get_windows_hardware_extra() -> Result<WindowsHardwareExtra, String> {
     }
 }
 
-// TODO 迁移，让新的结构体允许通过 tauri command 正确使用 structure.field 方式获取信息
 #[command]
-pub fn get_system_info(state: State<'_, RwLock<Platform>>) -> Result<String, Error> {
-    Ok(state.inner().read().to_string())
+pub fn get_system_info(state: State<'_, RwLock<Platform>>) -> Result<SystemInfo, Error> {
+    let platform = state.inner().read();
+    Ok(SystemInfo::from(platform.clone()))
 }
 
 /// 获取应用的运行时间（毫秒）
